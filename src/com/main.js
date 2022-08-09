@@ -3,9 +3,9 @@ import Member from "../containers/MemberContainer";
 import { Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function main(){
+export default function Main(){
     return(
-    <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+    <Tab.Container id="left-tabs-example" role="tablist" defaultActiveKey="first">
       <Row>
         <Col md={2}>
           <Nav variant="pills" className="flex-column">
@@ -21,12 +21,8 @@ export default function main(){
         </Col>
         <Col md={10}>
           <Tab.Content>
-            <Tab.Pane eventKey="first">
-              리덕스 연습하귀ㅣ이~
-            </Tab.Pane>
-            <Tab.Pane eventKey="second">
-                <Member/>
-            </Tab.Pane>
+            <Tab.Pane eventKey="first" className="mt-4"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
+            <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
           </Tab.Content>
         </Col>
       </Row>

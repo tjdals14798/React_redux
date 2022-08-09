@@ -1,11 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import MemberInfo from "../com/memberInfo";
 import "../modules/member";
+import { addMember, removeMember } from "../modules/member";
 
 function MemberContainer(){
     const member = useSelector(state => state.member);
-    return <MemberInfo member={member}/>
+    const dispatch = useDispatch();
+
+    const onCreate = text => dispatch(addMember(text));
+    const onRemove = useCallback(id => dispatch(removeMember(id),[dispatch]));
+    return <MemberInfo member={member} onCreate={onCreate} onRemove={onRemove}/>
 }
 
 export default MemberContainer;
