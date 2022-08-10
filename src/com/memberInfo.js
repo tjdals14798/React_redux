@@ -17,7 +17,7 @@ const MemberList = React.memo(function TodoList({ member, onRemove }) {
     );
   });
 
-export default function Member({ member, onCreate, onRemove }){
+export default function Member({ member, onCreate, onRemove, onSearch }){
 
   const [inputs,setInputs] = useState({
     id: '',
@@ -25,6 +25,12 @@ export default function Member({ member, onCreate, onRemove }){
     nickname: ''
   });
 
+  const [lgInputs,setLgInputs] = useState({
+    loginid: '',
+    loginpassword: ''
+  })
+
+  const { loginid, loginpassword } = lgInputs;
   const { id, password, nickname } = inputs;
 
   const onChange = e => {
@@ -42,11 +48,28 @@ export default function Member({ member, onCreate, onRemove }){
       password: '',
       nickname: ''
     });
-}
+  }
 
-    return(
+  const loginOnChange = e => {
+    const {name, value} = e.target;
+    setInputs({
+      ...lgInputs,
+      [name]:value
+    });
+  }
+  
+  const loginOnSubmit = () => {
+    onSearch(lgInputs);
+    setLgInputs({
+      loginid: '',
+      loginpassword: ''
+    });
+  }
+
+  return(
         <>
-        <Table striped bordered hover variant="dark" className="mt-4 w-75">
+        <Container fluid="md">
+        <Table striped bordered hover variant="dark" className="w-100">
             <thead> 
                 <tr><th>회원 아이디</th><th>회원 닉네임</th><th></th></tr>
             </thead>
@@ -54,7 +77,7 @@ export default function Member({ member, onCreate, onRemove }){
                 <MemberList member={member} onRemove={onRemove}/>
             </tbody>
         </Table>
-        <Table striped bordered hover variant="dark" className="mt-4 w-75">
+        <Table striped bordered hover variant="dark" className="mt-4 w-100">
           <thead>
             <tr>
               <th colSpan={2}>추가</th>
@@ -65,10 +88,32 @@ export default function Member({ member, onCreate, onRemove }){
               <td>
               <Container fluid="xl">
               <Form>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" name="id" value={id} onChange={onChange}/>
-                  <Form.Control type="text" autoFocus placeholder="PASSWORD 를 입력하세요" className="my-1" name="password" value={password} onChange={onChange}/>
-                  <Form.Control type="text" autoFocus placeholder="NICKNAME 를 입력하세요" name="nickname" value={nickname} onChange={onChange}/>
+                <Form.Group required controlId="formBasicEmail">
+                  <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="loginid" value={loginid} onChange={loginOnChange}/>
+                  <Form.Control type="text" autoFocus placeholder="PASSWORD 를 입력하세요" required className="my-1" name="loginpassword" value={loginpassword} onChange={loginOnChange}/>
+                </Form.Group>
+                <Button variant="secondary" className="mt-2 w-100" onClick={loginOnSubmit}> 로그인 </Button>
+              </Form>
+              </Container>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+
+        <Table striped bordered hover variant="dark" className="mt-4 w-100">
+          <thead>
+            <tr>
+              <th colSpan={2}>로그인</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+              <Container fluid="xl">
+              <Form>
+                <Form.Group required controlId="formBasicEmail">
+                  <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="id" value={id} onChange={onChange}/>
+                  <Form.Control type="text" autoFocus placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={onChange}/>
                 </Form.Group>
                 <Button variant="secondary" className="mt-2 w-100" onClick={onSubmit}> 가입 </Button>
               </Form>
@@ -77,6 +122,8 @@ export default function Member({ member, onCreate, onRemove }){
             </tr>
           </tbody>
         </Table>
+
+        </Container>
         </>
     );
 }

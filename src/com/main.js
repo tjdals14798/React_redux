@@ -5,12 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Main(){
     return(
-    <Tab.Container id="left-tabs-example" role="tablist" defaultActiveKey="first">
-      <Row>
+    <Tab.Container defaultActiveKey="first">
+      <Row className="mt-3">
         <Col md={2}>
-          <Nav variant="pills" className="flex-column">
+        <h1 style={{textAlign:"center"}}><Badge bg="dark">Redux</Badge></h1>
+          <Nav variant="tabs" className="flex-column">
             <Nav.Item>
-              <h1 style={{textAlign:"center"}}><Badge bg="dark">Redux</Badge></h1>
+              <Nav.Link eventKey="first">
+                메인
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="second">
@@ -20,8 +23,8 @@ export default function Main(){
           </Nav>
         </Col>
         <Col md={10}>
-          <Tab.Content>
-            <Tab.Pane eventKey="first" className="mt-4"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
+          <Tab.Content className="mt-3">
+            <Tab.Pane eventKey="first"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
             <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
           </Tab.Content>
         </Col>
