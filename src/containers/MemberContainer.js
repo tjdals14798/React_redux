@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MemberInfo from "../com/memberInfo";
-import { addMember, removeMember } from "../modules/member";
+import { addMember, removeMember, changeNickname } from "../modules/member";
 
 function MemberContainer(){
     const member = useSelector(state => state.member);
@@ -9,7 +9,8 @@ function MemberContainer(){
 
     const onCreate = text => dispatch(addMember(text));
     const onRemove = useCallback(id => dispatch(removeMember(id),[dispatch]));
-    return <MemberInfo member={member} onCreate={onCreate} onRemove={onRemove}/>
+    const onNChange = useCallback(text => dispatch(changeNickname(text),[dispatch]));
+    return <MemberInfo member={member} onCreate={onCreate} onRemove={onRemove} onNChange={onNChange}/>
 }
 
 export default MemberContainer;
