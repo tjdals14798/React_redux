@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Table, Toast, ToastContainer } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,19 +8,19 @@ function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange }){
         password: ''
     });
     const { id, password } = Inputs;
-
+    
     const [changeInputs,setChangeInputs] = useState({
-    changeid: '',
-    changenickname: ''
-  });
-  const { changeid, changenickname } = changeInputs;
+      changeid: '',
+      changenickname: ''
+    });
+    const { changeid, changenickname } = changeInputs;
 
     const loginOnChange = e => {
-    const {name, value} = e.target;
-    setInputs({
+      const {name, value} = e.target;
+      setInputs({
         ...Inputs,
         [name]:value
-    });
+      });
     }
       
     const loginOnSubmit = () => {
@@ -88,7 +88,7 @@ function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange }){
                 <Container fluid="xl">
                 <Form>
                   <Form.Group required controlId="formBasicEmail">
-                    <Form.Control type="text" placeholder="ID 를 입력하세요" required name="changeid" value={changeid} onChange={NickonChange}/>
+                    <Form.Control type="text" placeholder="ID 를 입력하세요" name="changeid" value={changeid} onChange={NickonChange}/>
                     <Form.Control type="text" placeholder="NICKNAME 를 입력하세요" required className="my-1" name="changenickname" value={changenickname} onChange={NickonChange}/>
                   </Form.Group>
                   <Button variant="secondary" className="mt-2 w-100" onClick={NickonSubmit}> 변경 </Button>
@@ -99,22 +99,22 @@ function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange }){
             </tbody>
           </Table>
           <ToastContainer className="p-3" position="top-end">
-          <Toast>
-            <Toast.Header closeButton={false}>
-              <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-              <strong className="me-auto">Bootstrap</strong>
-              <small>^ _ ^</small>
-            </Toast.Header>
-            <Toast.Body>{userName} 님 환영합니다!!<hr/>
-            <Button variant="outline-secondary" size="sm" onClick={onLogOut}>로그아웃</Button></Toast.Body>
-          </Toast>
+            <Toast>
+              <Toast.Header closeButton={false}>
+                <strong className="me-auto">Bootstrap</strong>
+                <small>^ _ ^</small>
+              </Toast.Header>
+              <Toast.Body>
+                {userName} 님 환영합니다!!<hr/>
+                <Button variant="outline-secondary" size="sm" onClick={onLogOut}>로그아웃</Button>
+              </Toast.Body>
+            </Toast>
           </ToastContainer>
           </>
         }
         </Container>
         </>
     )
-
 }
 
 export default Loginpage;

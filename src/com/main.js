@@ -1,6 +1,7 @@
 import React from "react";
 import Member from "../containers/MemberContainer";
 import Login from "../containers/LoginContainer";
+import Post from "../containers/PostContainer";
 import { Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -26,6 +27,11 @@ export default function Main(){
                 로그인
               </Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="fourth">
+                게시판
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
         </Col>
         <Col md={10}>
@@ -33,6 +39,7 @@ export default function Main(){
             <Tab.Pane eventKey="first"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
             <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
             <Tab.Pane eventKey="third"> <Login/> </Tab.Pane>
+            <Tab.Pane eventKey="fourth"> <Post/> </Tab.Pane>
           </Tab.Content>
         </Col>
       </Row>
