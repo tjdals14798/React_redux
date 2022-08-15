@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import LoginPage from "../com/loginPage";
+import { changeNickname } from "../modules/member";
 
 export default function Loginpage(){
     const member = useSelector(state => state.member);
@@ -12,6 +13,7 @@ export default function Loginpage(){
     }); 
     const { id, password } = inputs;
     const onSearch = useCallback(text => setInputs(text));
+    const onNChange = useCallback(text => dispatch(changeNickname(text),[dispatch]));
     
     useEffect(()=>{
         findMember(member);
@@ -27,5 +29,5 @@ export default function Loginpage(){
         setCklogin(false);
     }
 
-    return <LoginPage onSearch={onSearch} cklogin={cklogin} userName={inputs.id} onLogOut={onLogOut}/>
+    return <LoginPage onSearch={onSearch} cklogin={cklogin} userName={inputs.id} onLogOut={onLogOut} onNChange={onNChange}/>
 }

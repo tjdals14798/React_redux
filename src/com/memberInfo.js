@@ -17,21 +17,14 @@ const MemberList = React.memo(function TodoList({ member, onRemove }) {
     );
   });
 
-export default function Member({ member, onCreate, onRemove, onNChange }){
+export default function Member({ member, onCreate, onRemove }){
 
   const [inputs,setInputs] = useState({
     id: '',
     password: '',
     nickname: ''
   });
-
-  const [changeInputs,setChangeInputs] = useState({
-    changeid: '',
-    changenickname: ''
-  });
-
   const { id, password, nickname } = inputs;
-  const { changeid, changenickname } = changeInputs;
 
   const onChange = e => {
     const {name, value} = e.target;
@@ -47,22 +40,6 @@ export default function Member({ member, onCreate, onRemove, onNChange }){
       id: '',
       password: '',
       nickname: ''
-    });
-  }
-
-  const NickonChange = e => {
-    const {name, value} = e.target;
-    setChangeInputs({
-      ...changeInputs,
-      [name]:value
-    });
-  }
-
-  const NickonSubmit = () => {
-    onNChange(changeInputs);
-    setChangeInputs({
-      changeid: '',
-      changenickname: ''
     });
   }
 
@@ -101,29 +78,6 @@ export default function Member({ member, onCreate, onRemove, onNChange }){
             </tr>
           </tbody>
         </Table>
-
-        <Table striped bordered hover variant="dark" className="mt-4 w-100">
-            <thead>
-              <tr>
-                <th colSpan={2}>닉네임 변경</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                <Container fluid="xl">
-                <Form>
-                  <Form.Group required controlId="formBasicEmail">
-                    <Form.Control type="text" placeholder="ID 를 입력하세요" required name="changeid" value={changeid} onChange={NickonChange}/>
-                    <Form.Control type="text" placeholder="NICKNAME 를 입력하세요" required className="my-1" name="changenickname" value={changenickname} onChange={NickonChange}/>
-                  </Form.Group>
-                  <Button variant="secondary" className="mt-2 w-100" onClick={NickonSubmit}> 변경 </Button>
-                </Form>
-                </Container>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
         </Container>
         </>
     );
