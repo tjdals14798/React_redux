@@ -1,8 +1,29 @@
 import React from "react";
-import { Button, Container, Form, Table } from 'react-bootstrap';
+import { Button, Container, Form, Nav, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function PostPage(){
+const PostItem = React.memo(function TodoItem({ post }) {
+  return (
+    <>
+      <td>{post.id}</td>
+      <td>{post.postname}</td>
+    </>
+  );
+});
+
+const PostList = React.memo(function TodoList({ posts }) {
+  return (
+    <>
+      {posts.map(post => (
+        <tr key={post.id}>
+            <PostItem post={post} />
+        </tr>
+      ))}
+    </>
+  );
+});
+
+function PostPage({ post }){
     return(
         <>
         <Container>
@@ -13,10 +34,8 @@ function PostPage(){
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>내용 넣어야함
-                </td>
-              </tr>
+              <tr><th>번호</th><th>글 제목</th></tr>
+              <PostList posts={post} />
             </tbody>
           </Table>
         </Container>
