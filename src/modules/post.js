@@ -1,12 +1,13 @@
-
 const initialState = [
     {
-        id: 1,
+        key:0,
+        id: "관리자",
         postname: "공지사항",
         postcontent: "글쓰는 법"
     },
     {
-        id: 2,
+        key:1,
+        id: "관리자",
         postname: "테스트",
         postcontent: "테스트"
     }
