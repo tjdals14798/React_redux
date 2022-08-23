@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import PostPage from "../com/postPage";
+import "../modules/member";
 
 export default function PostContainer(){
     const post = useSelector(state => state.post);

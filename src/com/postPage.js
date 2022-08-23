@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Modal, Table } from 'react-bootstrap';
+import { Button, Container, Form, Modal, Table, Toast, ToastContainer } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PostItem = React.memo(function TodoItem({ post, setModalShow, value, setIndex }) {
@@ -11,6 +11,7 @@ const PostItem = React.memo(function TodoItem({ post, setModalShow, value, setIn
 
   return (
     <>
+      <td>{post.key}</td>
       <td>{post.id}</td>
       <td><Button variant="link" size="sm" className="w-100" index={value} onClick={onModal} style={{textDecoration:"none", color:"white"}}> {post.postname} </Button></td>
     </>
@@ -48,7 +49,13 @@ function PostModal({ post, show, setModalShow, postIndex }){
   )
 }
 
-function PostingModal({ show,setPostModal }){
+function PostingModal({ show, setPostModal }){
+  const [postInputs,setPostInputs] = useState({
+    id: "",
+    postname: "",
+    postcontent: ""
+  });
+
   return(
   <Modal size="lg" centered show={show}>
       <Modal.Header>
@@ -57,8 +64,13 @@ function PostingModal({ show,setPostModal }){
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4></h4>
-        <p> </p>
+        <Form>
+          <Form.Group required controlId="formBasicEmail">
+            <Form.Control type="text" autoFocus placeholder="글 제목을 입력하세요" />
+            <Form.Control as="textarea" aria-label="With textarea" className="my-1" placeholder="글 내용을 입력하세요"/>
+          </Form.Group>
+          <Button variant="secondary" className="mt-2 w-100"> 글쓰기 </Button>
+        </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={()=>setPostModal(false)}> 닫기 </Button>
@@ -76,13 +88,13 @@ function PostPage({ post, postIndex, setIndex }){
       <Table striped bordered hover variant="dark" className="mt-4 w-75">
           <thead>
             <tr>
-              <th colSpan={2}>게시판</th>
+              <th colSpan={3}>게시판</th>
             </tr>
           </thead>
           <tbody>
-            <tr><th>작성자</th><th>글 제목</th></tr>
+            <tr><th>#</th><th>작성자</th><th>글 제목</th></tr>
             <PostList posts={post} setModalShow={setModalShow} setIndex={setIndex}/>  
-            <tr><td colSpan={2}><Button size="sm" variant="outline-light" onClick={()=>setPostModal(true)} > 글쓰기 </Button></td></tr>
+            <tr><td colSpan={3}><Button size="sm" variant="outline-light" onClick={()=>setPostModal(true)} > 글쓰기 </Button></td></tr>
           </tbody>
         </Table>
         <PostModal show={modalShow} post={post} postIndex={postIndex} setModalShow={setModalShow}/>
