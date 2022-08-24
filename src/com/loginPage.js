@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Container, Form, Modal, Table, Toast, ToastContainer } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -74,7 +74,7 @@ function LoginModal({ onSearch, loginModal, setLoginModal }){
             <Form>
               <Form.Group required controlId="formBasicEmail">
                 <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="id" value={id} onChange={loginOnChange}/>
-                <Form.Control type="text" autoFocus placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
+                <Form.Control type="text" placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
               </Form.Group>
               <Button variant="secondary" className="mt-2 w-100" onClick={loginOnSubmit}> 로그인 </Button>
             </Form>
@@ -87,8 +87,7 @@ function LoginModal({ onSearch, loginModal, setLoginModal }){
   )
 }
 
-function ChangeInfoModal({ changeModal, setChangeModal, onNChange, userName }){
-  console.log(userName);
+function ChangeInfoModal({ changeModal, setChangeModal, onNChange}){
   const [changeInputs,setChangeInputs] = useState({
     changeid: '',
     changenickname: ''
@@ -137,7 +136,109 @@ function ChangeInfoModal({ changeModal, setChangeModal, onNChange, userName }){
   )
 }
 
-function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange }){
+const PostItem = React.memo(function TodoItem({ post, setModalShow, value, setIndex }) {
+
+  const onModal = () => {
+    setIndex(value)
+    setModalShow(true)
+  }
+
+  return (
+    <>
+      <td>{post.key}</td>
+      <td>{post.id}</td>
+      <td><Button variant="link" size="sm" className="w-100" index={value} onClick={onModal} style={{textDecoration:"none", color:"white"}}> {post.postname} </Button></td>
+    </>
+  );
+});
+
+const PostList = React.memo(function TodoList({ posts, setModalShow, setIndex }) {
+  return (
+    <>
+      {posts.map(post => (
+        <tr key={post.key} >
+            <PostItem post={post} setModalShow={setModalShow} setIndex={setIndex} value={post.key}/>
+        </tr>
+      ))}
+    </>
+  );
+});
+
+function PostModal({ post, show, setModalShow, postIndex }){
+  return(
+  <Modal size="lg" centered show={show}>
+      <Modal.Header>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {post[postIndex].key} 번 게시글
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <h4> {post[postIndex].postname} </h4>
+        <p> {post[postIndex].postcontent} </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={()=>setModalShow(false)}> 닫기 </Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+function PostingModal({ show, setPostModal }){
+  const [postInputs,setPostInputs] = useState({
+    id: "",
+    postname: "",
+    postcontent: ""
+  });
+
+  return(
+  <Modal size="lg" centered show={show}>
+      <Modal.Header>
+        <Modal.Title id="contained-modal-title-vcenter">
+          글쓰기
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group required controlId="formBasicEmail">
+            <Form.Control type="text" autoFocus placeholder="글 제목을 입력하세요" />
+            <Form.Control as="textarea" aria-label="With textarea" className="my-1" placeholder="글 내용을 입력하세요"/>
+          </Form.Group>
+          <Button variant="secondary" className="mt-2 w-100"> 글쓰기 </Button>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={()=>setPostModal(false)}> 닫기 </Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+function PostPage({ post, postIndex, setIndex, cklogin }){
+  const [modalShow,setModalShow] = useState(false);
+  const [postModal, setPostModal] = useState(false);
+    return(
+      <>
+      <Container>
+      <Table striped bordered hover variant="dark" className="mt-4 w-75">
+          <thead>
+            <tr>
+              <th colSpan={3}>게시판</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th>#</th><th>작성자</th><th>글 제목</th></tr>
+            <PostList posts={post} setModalShow={setModalShow} setIndex={setIndex} cklogin={cklogin}/>  
+            {cklogin && <tr><td colSpan={3}><Button size="sm" variant="outline-light" onClick={()=>setPostModal(true)} > 글쓰기 </Button></td></tr>}
+          </tbody>
+        </Table>
+        <PostModal show={modalShow} post={post} postIndex={postIndex} setModalShow={setModalShow}/>
+        <PostingModal show={postModal} setPostModal={setPostModal}/>
+      </Container>
+      </>
+    )
+}
+
+function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange, post, postIndex, setIndex }){
   const [loginModal,setLoginModal] = useState(false);
   const [changeModal,setChangeModal] = useState(false);
 
@@ -145,59 +246,9 @@ function Loginpage ({ onSearch, cklogin, userName, onLogOut, onNChange }){
       <>
         <Container>
           <LoginTost loginModal={loginModal} setLoginModal={setLoginModal} setChangeModal={setChangeModal} onLogOut={onLogOut} userName={userName} cklogin={cklogin}/>
-          <LoginModal loginModal={loginModal} setLoginModal={setLoginModal} onSearch={onSearch} userName={userName} cklogin={cklogin}/>
-          <ChangeInfoModal changeModal={changeModal} setChangeModal={setChangeModal} onNChange={onNChange}/>
-        {/* {!cklogin &&
-          <Table striped bordered hover variant="dark" className="mt-4 w-75">
-            <thead>
-              <tr>
-                <th colSpan={2}>로그인</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                <Container fluid="xl">
-                <Form>
-                  <Form.Group required controlId="formBasicEmail">
-                    <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="id" value={id} onChange={loginOnChange}/>
-                    <Form.Control type="text" autoFocus placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
-                  </Form.Group>
-                  <Button variant="secondary" className="mt-2 w-100" onClick={loginOnSubmit}> 로그인 </Button>
-                </Form>
-                </Container>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-        } */}
-        {/* {cklogin &&
-          <>
-          <Table striped bordered hover variant="dark" className="mt-4 w-75">
-            <thead>
-              <tr>
-                <th colSpan={2}>닉네임 변경</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                <Container fluid="xl">
-                <Form>
-                  <Form.Group required controlId="formBasicEmail">
-                    <Form.Control type="text" placeholder="ID 를 입력하세요" name="changeid" value={changeid} onChange={NickonChange}/>
-                    <Form.Control type="text" placeholder="NICKNAME 를 입력하세요" required className="my-1" name="changenickname" value={changenickname} onChange={NickonChange}/>
-                  </Form.Group>
-                  <Button variant="secondary" className="mt-2 w-100" onClick={NickonSubmit}> 변경 </Button>
-                </Form>
-                </Container>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-          <LoginTost userName={userName} onLogOut={onLogOut} />
-          </>
-        } */}
+          <LoginModal loginModal={loginModal} setLoginModal={setLoginModal} onSearch={onSearch} cklogin={cklogin}/>
+          <ChangeInfoModal changeModal={changeModal} setChangeModal={setChangeModal} userName={userName} onNChange={onNChange}/>
+          <PostPage post={post} postIndex={postIndex} setIndex={setIndex} cklogin={cklogin}/>
         </Container>
       </>
     )
