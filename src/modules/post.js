@@ -1,3 +1,18 @@
+const ADD_POST = "/post/ADD_POST";
+
+
+let nextKey = 2;
+
+export const addPost = ( pId, text ) => ({
+    type: ADD_POST,
+    post: {
+        key: nextKey++,
+        id: pId,
+        postname: text.postname,
+        postcontent: text.postcontent
+    }
+});
+
 const initialState = [
     {
         key:0,
@@ -15,7 +30,8 @@ const initialState = [
 
 export default function post(state = initialState, action){
     switch (action.type) {
-
+        case ADD_POST :
+            return state.concat(action.post);
         default :
             return state;
     }

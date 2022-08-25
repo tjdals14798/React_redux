@@ -16,11 +16,11 @@ export const removeMember = id => ({
     id
 });
 
-export const changeNickname = text =>({
+export const changeNickname = (cName,cNick) =>({
     type: CHANGE_NICKNAME,
     mem: {
-        id: text.changeid,
-        nickname: text.changenickname
+        id: cName,
+        nickname: cNick
     }
 });
 

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import LoginPage from "../com/loginPage";
 import { changeNickname } from "../modules/member";
-import "../modules/post";
+import { addPost } from "../modules/post";
 
 export default function Loginpage(){
     const member = useSelector(state => state.member);
@@ -16,7 +16,8 @@ export default function Loginpage(){
     }); 
     const { id, password } = inputs;
     const onSearch = useCallback(text => setInputs(text));
-    const onNChange = useCallback(text => dispatch(changeNickname(text),[dispatch]));
+    const onNChange = useCallback(text => dispatch(changeNickname(text.username,text.ChangeNick),[dispatch]));
+    const onPosting = useCallback(text => dispatch(addPost(text.username,text.postInputs),[dispatch]));
     
     const setIndex = idx => setPostIndex(idx);
     useEffect(()=>{
@@ -33,5 +34,5 @@ export default function Loginpage(){
         setCklogin(false);
     }
 
-    return <LoginPage onSearch={onSearch} cklogin={cklogin} userName={inputs.id} onLogOut={onLogOut} onNChange={onNChange} post={post} setIndex={setIndex} postIndex={postIndex}/>
+    return <LoginPage onSearch={onSearch} cklogin={cklogin} userName={inputs.id} onLogOut={onLogOut} onNChange={onNChange} post={post} setIndex={setIndex} postIndex={postIndex} onPosting={onPosting}/>
 }
