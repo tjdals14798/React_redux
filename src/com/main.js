@@ -1,6 +1,7 @@
 import React from "react";
 import Member from "../containers/MemberContainer";
 import Login from "../containers/LoginContainer";
+import Shoping from "../containers/ShopingContainer";
 import { Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,7 +24,12 @@ export default function Main(){
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="third">
-                로그인
+                활동
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="fourth">
+                쇼핑
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -33,6 +39,7 @@ export default function Main(){
             <Tab.Pane eventKey="first"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
             <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
             <Tab.Pane eventKey="third"> <Login/> </Tab.Pane>
+            <Tab.Pane eventKey="fourth"> <Shoping/> </Tab.Pane>
           </Tab.Content>
         </Col>
       </Row>
