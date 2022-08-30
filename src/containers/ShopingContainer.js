@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Shoping from "../com/shopingPage";
 import  "../modules/shoping";
-import {addCart} from "../modules/cart";
+import {addCart,removeCart} from "../modules/cart";
 
 function ShopingContainer (){
     const shoping = useSelector(state => state.shoping);
@@ -10,8 +10,8 @@ function ShopingContainer (){
     const dispatch = useDispatch();
 
     const onCart = text => dispatch(addCart(text));
-
-    return <Shoping shoping={shoping} cart={cart} onCart={onCart}/>
+    const onRemove = useCallback(id => dispatch(removeCart(id),[dispatch]));
+    return <Shoping shoping={shoping} cart={cart} onCart={onCart} onRemove={onRemove}/>
 }
 
 export default ShopingContainer;

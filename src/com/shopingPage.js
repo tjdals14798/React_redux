@@ -1,21 +1,22 @@
-import React from "react";
-import { Button, Container, Col, Card, Row, ToastContainer, Toast, Nav, Table } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Button, Container, Col, Card, Row, ToastContainer, Toast, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const CartList = React.memo(function CartList({ cart }){    
+const CartList = React.memo(function CartList({ cart, onRemove }){    
     return(
         <>
             {cart.map((cartitem) => (
                 <tr key={cartitem.id}>
                     <td>{cartitem.itemName}</td>
                     <td>{cartitem.itemMoney}</td>
+                    <td style={{cursor:'pointer'}} onClick={() => onRemove(cartitem.id)}>X</td>
                 </tr>
             ))}
         </>
     )
 });
 
-function CartTost({ cart }){
+function CartTost({ cart, onRemove }){
     return(
       <>
         <ToastContainer className="p-3" position="top-end">
@@ -26,17 +27,14 @@ function CartTost({ cart }){
             </Toast.Header>
             <Toast.Body>
 
-            <Table striped bordered hover className="w-100">
-            <thead> 
-                <tr><th></th><th>가격</th></tr>
-            </thead>
-            <tbody>
-            <CartList cart={cart}/>
-            </tbody>
-        </Table>
-
-            
-              <hr/>
+            <Table striped hover bordered className="w-100">
+                <thead> 
+                    <tr><th></th><th>가격</th><th></th></tr>
+                </thead>
+                <tbody>
+                    <CartList cart={cart} onRemove={onRemove}/>
+                </tbody>
+            </Table>
             </Toast.Body>
           </Toast>
         </ToastContainer>
@@ -72,13 +70,13 @@ const ShopingList = React.memo(function ShopingList({ shoping, onCart }){
     )
 });
 
-function ShopingPage ({ shoping, cart, onCart }){
+function ShopingPage ({ shoping, cart, onCart, onRemove }){
 
     return(
         <>
         <Container className="m-0" >
             <ShopingList shoping={shoping} onCart={onCart}/>
-            <CartTost cart={cart}/>
+            <CartTost cart={cart} onRemove={onRemove}/>
         </Container>
         </>
     )
