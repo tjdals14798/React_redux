@@ -114,7 +114,6 @@ function BuyModal({ showModal ,setShowModal }){
 function ShopingPage ({ shoping, cart, onCart, onRemove, onItemIdx, shopingidx }){
     const [Money,setMoney] = useState(0);
     const [showModal,setShowModal] = useState(false);
-    console.log(shopingidx)
     return(
         <>
         <Container className="m-0" >
