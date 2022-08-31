@@ -18,8 +18,8 @@ export default function Loginpage(){
     const onSearch = useCallback(text => setInputs(text));
     const onNChange = useCallback(text => dispatch(changeNickname(text.username,text.ChangeNick),[dispatch]));
     const onPosting = useCallback(text => dispatch(addPost(text.username,text.postInputs),[dispatch]));
-    
-    const setIndex = idx => setPostIndex(idx);
+     const setIndex = idx => setPostIndex(idx);
+     
     useEffect(()=>{
         findMember(member);
     },[inputs]);
