@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Col, Card, Row, ToastContainer, Toast, Table, Badge, Modal } from 'react-bootstrap';
+import { Button, Container, Col, Card, Row, ToastContainer, Toast, Table, Badge, Modal, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CartList = React.memo(function CartList({ cart, onRemove, Money, setMoney }){
@@ -22,7 +22,7 @@ const CartList = React.memo(function CartList({ cart, onRemove, Money, setMoney 
     )
 });
 
-function CartTost({ cart, onRemove, Money ,setMoney }){
+function CartTost({ cart, onRemove, Money ,setMoney, setcartBuyModal }){
     return(
       <>
         <ToastContainer className="p-3" position="top-end">
@@ -42,7 +42,7 @@ function CartTost({ cart, onRemove, Money ,setMoney }){
                 </tbody>
             </Table>
             <hr/>
-            <h4><Badge pill bg="secondary">{Money}원</Badge></h4>
+            <h4><Badge pill bg="secondary">{Money}원</Badge> <Button size="sm" variant="outline-secondary" onClick={() => setcartBuyModal(true)}>구매</Button></h4>
             </Toast.Body>
           </Toast>
         </ToastContainer>
@@ -83,7 +83,7 @@ const ShopingItem = React.memo(function ShopingItem({ item, onCart, Money ,setMo
 
 const ShopingList = React.memo(function ShopingList({ shoping, onCart , Money, setMoney, setShowModal, onItemIdx }){    
     return(
-        <Container>
+        <Container className="mb-3">
             <Row xs={1} md={3} className="justify-content-md-center">
                 {shoping.map((item) => (
                     <ShopingItem key={item.id} item={item} onCart={onCart} Money={Money} setMoney={setMoney} setShowModal={setShowModal} onItemIdx={onItemIdx}/>
@@ -93,16 +93,32 @@ const ShopingList = React.memo(function ShopingList({ shoping, onCart , Money, s
     )
 });
 
-function BuyModal({ showModal ,setShowModal }){
+function BuyModal({ showModal ,setShowModal, shopingidx, shoping }){
     return(
     <Modal size="lg" centered show={showModal}>
-        <Modal.Header>
-          <Modal.Title id="contained-modal-title-vcenter">
-            
-          </Modal.Title>
-        </Modal.Header>
+        <Modal.Header><h4><Badge bg="success">Hit</Badge></h4></Modal.Header>
         <Modal.Body>
-          
+          <Nav>
+            <img style={{margin:"30px"}} src={shoping[shopingidx].itemImg}/> &nbsp;
+            <Nav className="w-50">
+                <Container className="m-5 justify-content-md-center">
+                    <Table borderless>
+                        <thead>
+                            <tr>
+                                <th colSpan="2">{shoping[shopingidx].itemName}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>가격</td>
+                                <td>{shoping[shopingidx].itemMoney}</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <Button variant="outline-dark" className="w-100 mt-5">결제</Button>
+                </Container>
+            </Nav>
+          </Nav>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={()=>setShowModal(false)}> 닫기 </Button>
@@ -111,15 +127,52 @@ function BuyModal({ showModal ,setShowModal }){
     )
   }
 
+  function CartBuyModal({ cartBuyModal, setcartBuyModal, cart, Money }){
+    return(
+    <Modal size="lg" centered show={cartBuyModal}>
+        <Modal.Header>
+            {cart.length !==0 && <Modal.Title id="contained-modal-title-vcenter">{cart[0].itemName} 외 {cart.length}종 </Modal.Title>}
+            {cart.length ===0 && <Modal.Title id="contained-modal-title-vcenter">상품 없음</Modal.Title>}
+        </Modal.Header>
+        <Modal.Body>
+          <Nav>
+                <Container className="m-5 justify-content-md-center">
+                <Table striped hover bordered className="w-100">
+                    <thead> 
+                        <tr><th></th><th>가격</th></tr>
+                    </thead>
+                    <tbody>
+                        {cart.map((cartitem) => (
+                            <tr key={cartitem.id}>
+                                <td>{cartitem.itemName}</td>
+                                <td>{cartitem.itemMoney}</td>
+                            </tr>
+                        ))}
+                    </tbody>    
+                </Table>
+            <h2><Badge pill bg="secondary">{Money}원</Badge></h2>
+            <Button variant="outline-dark" className="w-100 mt-2">결제</Button>
+                </Container>
+          </Nav>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={()=>setcartBuyModal(false)}> 닫기 </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
 function ShopingPage ({ shoping, cart, onCart, onRemove, onItemIdx, shopingidx }){
     const [Money,setMoney] = useState(0);
     const [showModal,setShowModal] = useState(false);
+    const [cartBuyModal,setcartBuyModal] = useState(false);
     return(
         <>
         <Container className="m-0" >
             <ShopingList shoping={shoping} onCart={onCart} Money={Money} setMoney={setMoney} setShowModal={setShowModal} onItemIdx={onItemIdx}/>
-            <CartTost cart={cart} onRemove={onRemove} Money={Money} setMoney={setMoney}/>
-            <BuyModal showModal={showModal} setShowModal={setShowModal}/>
+            <CartTost cart={cart} onRemove={onRemove} Money={Money} setMoney={setMoney} setcartBuyModal={setcartBuyModal}/>
+            <BuyModal shoping={shoping} showModal={showModal} setShowModal={setShowModal} shopingidx={shopingidx}/>
+            <CartBuyModal cartBuyModal={cartBuyModal} setcartBuyModal={setcartBuyModal} cart={cart} Money={Money}/>
         </Container>
         </>
     )

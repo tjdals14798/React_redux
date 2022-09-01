@@ -89,7 +89,7 @@ function LoginModal({ onSearch, loginModal, setLoginModal }){
 
 function ChangeInfoModal({ changeModal, setChangeModal, onNChange, userName, cklogin }){
   const [username,setUserName] = useState('');
-  useEffect(()=>{ setUserName(userName); },[cklogin])
+  useEffect(()=>{ setUserName(userName) },[cklogin])
   const [ChangeNick,setChangeNick] = useState(''); 
   const Nickchange = e => (setChangeNick(e.target.value));
 
