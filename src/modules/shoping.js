@@ -1,4 +1,16 @@
-// let nextId = 5;
+const ADD_ITEM = "/shoping/ADD_ITEM";
+let nextId = 5;
+
+export const addItem = text => ({
+    type: ADD_ITEM,
+    inputs:{
+        id:nextId++,
+        itemName:text.itemName,
+        itemMoney:text.itemMoney,
+        itemImg: text.itemImg
+    }
+});
+
 const initialState = [
     {
         id:"0",
@@ -34,6 +46,8 @@ const initialState = [
 
 export default function shoping( state = initialState, action ){
     switch (action.type) {
+        case ADD_ITEM:
+            return state.concat(action.inputs);
         default:
             return state;
     }
