@@ -1,4 +1,6 @@
 const ADD_ITEM = "/shoping/ADD_ITEM";
+const REMOVE_ITEM = "/shoping/REMOVE_ITEM";
+
 let nextId = 5;
 
 export const addItem = text => ({
@@ -10,6 +12,11 @@ export const addItem = text => ({
         itemImg: text.itemImg
     }
 });
+
+export const removeItem = id =>({
+    type:REMOVE_ITEM,
+    id
+})
 
 const initialState = [
     {
@@ -48,6 +55,11 @@ export default function shoping( state = initialState, action ){
     switch (action.type) {
         case ADD_ITEM:
             return state.concat(action.inputs);
+        case REMOVE_ITEM:
+            return state.filter(
+                item =>
+                item.id !== action.id
+            )
         default:
             return state;
     }

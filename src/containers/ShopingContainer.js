@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Shoping from "../com/shopingPage";
-import { addItem } from "../modules/shoping";
+import { addItem, removeItem } from "../modules/shoping";
 import { addCart, removeCart } from "../modules/cart";
 
 function ShopingContainer (){
@@ -15,7 +15,8 @@ function ShopingContainer (){
     const onCreate = text => dispatch(addItem(text));
     const onItemIdx = idx => setShopingIdx(idx);
     const onRemove = useCallback(id => dispatch(removeCart(id),[dispatch]));
-    return <Shoping shoping={shoping} cart={cart} onCart={onCart} onRemove={onRemove} shopingidx={shopingidx} onItemIdx={onItemIdx} onCreate={onCreate}/>
+    const onItemRemove = useCallback(id => dispatch(removeItem(id),[dispatch]));
+    return <Shoping shoping={shoping} cart={cart} onCart={onCart} onRemove={onRemove} shopingidx={shopingidx} onItemIdx={onItemIdx} onCreate={onCreate} onItemRemove={onItemRemove}/>
 }
 
 export default ShopingContainer;
