@@ -2,6 +2,7 @@ import React from "react";
 import Member from "../containers/MemberContainer";
 import Login from "../containers/LoginContainer";
 import Shoping from "../containers/ShopingContainer";
+import MainPage from "../containers/MainContainer";
 import { Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -36,7 +37,7 @@ export default function Main(){
         </Col>
         <Col md={10}>
           <Tab.Content className="mt-3">
-            <Tab.Pane eventKey="first"> 리덕스 연습하귀ㅣ이~ </Tab.Pane>
+            <Tab.Pane eventKey="first"> <MainPage/> </Tab.Pane>
             <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
             <Tab.Pane eventKey="third"> <Login/> </Tab.Pane>
             <Tab.Pane eventKey="fourth"> <Shoping/> </Tab.Pane>

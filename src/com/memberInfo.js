@@ -10,7 +10,7 @@ const MemberList = React.memo(function TodoList({ member, onRemove }) {
           <tr key={mem.id}>
             <td>{mem.id}</td>
             <td>{mem.nickname}</td>
-            <td><Button size="sm" onClick={() => onRemove(mem.id)}> 삭제 </Button></td>
+            <td style={{width:"80px"}}><Button size="sm" variant="secondary" onClick={() => onRemove(mem.id)}> 삭제 </Button></td>
           </tr>
         ))}
       </>

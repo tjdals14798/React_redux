@@ -12,10 +12,10 @@ const CartList = React.memo(function CartList({ cart, onRemove, Money, setMoney 
                 <tr key={cartitem.id}>
                     <td>{cartitem.itemName}</td>
                     <td>{cartitem.itemMoney}</td>
-                    <td style={{cursor:'pointer'}} onClick={()=>{
+                    <td style={{width:"10px"}}><CloseButton onClick={()=>{
                         onRemove(cartitem.id)
-                        SumMoney(parseInt(cartitem.itemMoney))}}
-                    > X </td>
+                        SumMoney(parseInt(cartitem.itemMoney))}}/>
+                    </td>
                 </tr>
             ))}
         </>
@@ -151,13 +151,13 @@ function BuyModal({ showModal ,setShowModal, shopingidx, shoping }){
         <Modal.Header><h4><Badge bg="success">Hit</Badge></h4></Modal.Header>
         <Modal.Body>
           <Nav>
-            <img style={{margin:"30px"}} src={shoping[shopingidx].itemImg}/> &nbsp;
+            <img style={{margin:"30px", width:"18rem", height:"400px"}} src={shoping[shopingidx].itemImg}/> &nbsp;
             <Nav className="w-50">
                 <Container className="m-5 justify-content-md-center">
-                    <Table borderless>
+                    <Table borderless className="mt-5">
                         <thead>
                             <tr>
-                                <th colSpan="2">{shoping[shopingidx].itemName}</th>
+                                <th>{shoping[shopingidx].itemName}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -198,7 +198,7 @@ function BuyModal({ showModal ,setShowModal, shopingidx, shoping }){
                     <tbody>
                         {cart.map((cartitem) => (
                             <tr key={cartitem.id}>
-                                <td>{cartitem.itemName}</td>
+                                <td style={{width:"200px"}}>{cartitem.itemName}</td>
                                 <td>{cartitem.itemMoney}</td>
                             </tr>
                         ))}
