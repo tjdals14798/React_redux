@@ -1,34 +1,27 @@
 import React, { useState } from "react";
-import { Button, Container, Modal, Table } from 'react-bootstrap';
+import { Button, Carousel, Container, Modal, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function MemberModal({ memModal, setMemModal}){
+function MemberModal({ memModal, setMemModal }){
     return(
         <>
         <Modal size="lg" centered show={memModal}>
-        <Modal.Header></Modal.Header>
+        <Modal.Header><Modal.Title id="contained-modal-title-vcenter">회원목록</Modal.Title></Modal.Header>
         <Modal.Body>
-          {/* <Nav> */}
-            {/* <img style={{margin:"30px", width:"18rem", height:"400px"}} src={shoping[shopingidx].itemImg}/> &nbsp;
-            <Nav className="w-50">
-                <Container className="m-5 justify-content-md-center">
-                    <Table borderless className="mt-5">
-                        <thead>
-                            <tr>
-                                <th>{shoping[shopingidx].itemName}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>가격</td>
-                                <td>{shoping[shopingidx].itemMoney}</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                    <Button variant="outline-dark" className="w-100 mt-5">결제</Button>
-                </Container>
-            </Nav>
-          </Nav> */}
+            <Carousel variant="dark">
+                <Carousel.Item>
+                    <img className="d-block w-100" style={{ height:"400px" }} src={require("../codeimg/memIndex.png")} alt="First slide"/>
+                </Carousel.Item>
+                <Carousel.Item>
+                    <img className="d-block w-100" style={{ height:"400px" }} src={require("../codeimg/memContainer.png")} alt="Second slide"/>
+                </Carousel.Item>
+                <Carousel.Item>
+                    <img className="d-block w-100" style={{ height:"400px" }} src={require("../codeimg/memCom1.png")} alt="Third slide"/>
+                </Carousel.Item>
+                <Carousel.Item>
+                    <img className="d-block w-100" style={{ height:"400px" }} src={require("../codeimg/memCom2.png")} alt="Fourth slide"/>
+                </Carousel.Item>
+            </Carousel>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={()=>setMemModal(false)}> 닫기 </Button>
@@ -39,7 +32,7 @@ function MemberModal({ memModal, setMemModal}){
     )
 }
 
-export default function MainPage({}){
+export default function MainPage(){
     const [memModal,setMemModal] = useState(false);
 
     return(
@@ -56,7 +49,7 @@ export default function MainPage({}){
                     </tr>
                 </tbody>
             </Table>
-            <MemberModal memModal={memModal} setMemModal={setMemModal}/>
+            <MemberModal memModal={memModal} setMemModal={setMemModal} />
         </Container>
         </>
     )
