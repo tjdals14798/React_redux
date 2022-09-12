@@ -25,7 +25,7 @@ export default function Main(){
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="third">
-                활동
+                게시판
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
