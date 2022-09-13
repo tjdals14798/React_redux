@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Form, Modal, Table, Toast, ToastContainer } from 'react-bootstrap';
+import { Button, Container, Form, Modal, Table, Toast, ToastContainer, Pagination } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function LoginTost({cklogin ,onLogOut, userName, setLoginModal, setChangeModal }){
@@ -131,8 +131,8 @@ const PostItem = React.memo(function TodoItem({ post, setModalShow, value, setIn
 
   return (
     <>
-      <td>{post.key}</td>
-      <td>{post.id}</td>
+      <td style={{width:"100px"}}>{post.key+1}</td>
+      <td style={{width:"300px"}} >{post.id}</td>
       <td><Button variant="link" size="sm" className="w-100" index={value} onClick={onModal} style={{textDecoration:"none", color:"white"}}> {post.postname} </Button></td>
     </>
   );
@@ -155,12 +155,10 @@ function PostModal({ post, show, setModalShow, postIndex }){
   <Modal size="lg" centered show={show}>
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
-          {post[postIndex].key} 번 게시글
+          {post[postIndex].postname}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4> {post[postIndex].postname} </h4>
-        <hr/>
         <p> {post[postIndex].postcontent} </p>
       </Modal.Body>
       <Modal.Footer>
@@ -219,9 +217,34 @@ function PostingModal({ show, setPostModal, userName, cklogin, onPosting }){
   )
 }
 
+function PostPagination ({ currentPage, length, setCurrentPage }){
+
+  let items = [];
+  for (let number = 1; number <= length ; number++) {
+    items.push(
+      <Pagination.Item key={number} active={number === currentPage} onClick={()=>setCurrentPage(number)}>
+        {number}
+      </Pagination.Item>
+    );
+  }
+
+  return <Pagination style={{justifyContent:"center", marginLeft:"-25.8%"}}>{items}</Pagination>
+  
+}
+
 function PostPage({ post, postIndex, setIndex, cklogin, userName, onPosting }){
   const [modalShow,setModalShow] = useState(false);
   const [postModal, setPostModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 10;
+
+  const indexOfLast = currentPage * postsPerPage;
+  const indexOfFirst = indexOfLast - postsPerPage;
+  const currentPosts = (posts) => {
+    let currentPosts = 0;
+    currentPosts = posts.slice(indexOfFirst, indexOfLast);
+    return currentPosts;
+  };
     return(
       <>
       <Container>
@@ -233,13 +256,36 @@ function PostPage({ post, postIndex, setIndex, cklogin, userName, onPosting }){
           </thead>
           <tbody>
             <tr><th>#</th><th>작성자</th><th>글 제목</th></tr>
-            <PostList posts={post} setModalShow={setModalShow} setIndex={setIndex} cklogin={cklogin}/>  
+            <PostList posts={currentPosts(post)} setModalShow={setModalShow} setIndex={setIndex} cklogin={cklogin}/>  
             {cklogin && <tr><td colSpan={3}><Button size="sm" variant="outline-light" onClick={()=>setPostModal(true)} > 글쓰기 </Button></td></tr>}
           </tbody>
         </Table>
         <PostModal show={modalShow} post={post} postIndex={postIndex} setModalShow={setModalShow}/>
         <PostingModal show={postModal} setPostModal={setPostModal} userName={userName} cklogin={cklogin} onPosting={onPosting}/>
+        <PostPagination currentPage={currentPage} length={Math.ceil(post.length/10)} setCurrentPage={setCurrentPage}/>
       </Container>
+
+      <style type="text/css">
+      {`
+      .page-link {
+        color: #000; 
+        background-color: #fff;
+        border: 1px solid #ccc; 
+      }   
+      .page-item.active .page-link {
+        z-index: 1;
+        color: #555;
+        font-weight:bold;
+        background-color: #f1f1f1;
+        border-color: #ccc;
+      }  
+      .page-link:focus, .page-link:hover {
+        color: #000;
+        background-color: #fafafa; 
+        border-color: #ccc;
+      `}
+      </style>
+
       </>
     )
 }

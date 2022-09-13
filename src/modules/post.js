@@ -18,9 +18,68 @@ const initialState = [
         id: "관리자",
         postname: "공지사항",
         postcontent: "글쓰는 법"
-    },
-    {
+    },{
         key:1,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:2,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:3,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:4,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:5,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:6,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:7,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:8,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:9,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:10,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:11,
+        id: "관리자",
+        postname: "테스트",
+        postcontent: "테스트"
+    },{
+        key:12,
+        id: "관리자",
+        postname: "공지사항",
+        postcontent: "글쓰는 법"
+    },{
+        key:13,
         id: "관리자",
         postname: "테스트",
         postcontent: "테스트"
