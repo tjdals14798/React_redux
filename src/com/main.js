@@ -3,6 +3,7 @@ import Member from "../containers/MemberContainer";
 import Login from "../containers/LoginContainer";
 import Shoping from "../containers/ShopingContainer";
 import MainPage from "../containers/MainContainer";
+import AxiosPage from "./axiosPage";
 import { Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -33,6 +34,11 @@ export default function Main(){
                 쇼핑
               </Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="fifth">
+                Axios
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
         </Col>
         <Col md={10}>
@@ -41,6 +47,7 @@ export default function Main(){
             <Tab.Pane eventKey="second"> <Member/> </Tab.Pane>
             <Tab.Pane eventKey="third"> <Login/> </Tab.Pane>
             <Tab.Pane eventKey="fourth"> <Shoping/> </Tab.Pane>
+            <Tab.Pane eventKey="fifth"> <AxiosPage/> </Tab.Pane>
           </Tab.Content>
         </Col>
       </Row>
