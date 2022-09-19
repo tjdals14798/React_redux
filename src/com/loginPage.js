@@ -185,7 +185,7 @@ function PostingModal({ show, setPostModal, userName, cklogin, onPosting }){
     });
   }
 
-  const onSubmit = e =>{
+  const onSubmit = () =>{
     onPosting({username,postInputs});
     setPostInputs({
       postname: "",

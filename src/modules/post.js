@@ -1,6 +1,6 @@
 const ADD_POST = "/post/ADD_POST";
 
-let nextKey = 2;
+let nextKey = 14;
 
 export const addPost = ( pId, text ) => ({
     type: ADD_POST,
