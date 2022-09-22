@@ -1,10 +1,16 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
-import { Container, Nav, Card, Button } from 'react-bootstrap';
+import { Container, Nav, Card, Button, InputGroup, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ChevronRight, ChevronLeft, ChevronUp } from 'react-bootstrap-icons';
+import { ChevronRight, ChevronLeft, ChevronUp, Search } from 'react-bootstrap-icons';
 
-function Heder(){
+function Heder({ setSearchMovie }){
+    const [input,setInput] = useState('');
+    const SearchMovie = e => setInput(e.target.value);
+    const onSubmit = e => {
+        e.preventDefault(); // Submit 이벤트 발생했을 때 새로고침 방지
+        setSearchMovie(input)
+    }
     return(
         <div className="contentDiv">
             <div className="hederContents">
@@ -14,7 +20,17 @@ function Heder(){
                 </ul>
             </div>
             <hr/>
-            <Nav className="my-2"><li className="movie_li">영화</li><li className="movie_li">극장</li><li className="movie_li">예매</li><li className="movie_li">스토어</li><li className="movie_li">이벤트</li></Nav>
+            <Nav className="my-2">
+                <li className="movie_li">영화</li><li className="movie_li">극장</li><li className="movie_li">예매</li><li className="movie_li">스토어</li><li className="movie_li">이벤트</li>
+                <div style={{top:"85px",position:"absolute", right:"0px"}}>
+                <Form onSubmit={onSubmit}>
+                    <InputGroup size="sm">
+                        <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm" value={input} onChange={SearchMovie}/>
+                        <InputGroup.Text id="inputGroup-sizing-sm" onClick={onSubmit} style={{cursor:"pointer"}}><Search/></InputGroup.Text>
+                    </InputGroup>
+                </Form>
+                </div>
+            </Nav>
             <img className="d-block w-100" style={{ height:"500px",borderTop:"2px solid red"}} src={require("../codeimg/dragon.jpg")}/>
         </div>
     )
@@ -105,7 +121,7 @@ export default function MoviePage(){
     useEffect(()=>{
         JSON.stringify(fetchUsers());
     },[]);
-    console.log(movie)
+    
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 5;
     const indexOfLast = currentPage * postsPerPage;
@@ -115,7 +131,15 @@ export default function MoviePage(){
     let currentPosts = 0;
     currentPosts = posts.slice(indexOfFirst, indexOfLast);
     return currentPosts;
-  };
+    };
+
+    const [searchMovie,setSearchMovie] = useState(''); 
+
+    const search = (movie) => {
+        return movie.filter((item) => 
+            item.movieNm.includes(searchMovie)
+        );
+    }
 
     if(loading) return <div>로딩중...</div>;
     if(error) return <div>에러</div>;
@@ -124,43 +148,42 @@ export default function MoviePage(){
     return(
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
-            <Heder/>
-            <Movie movies={currentPosts(movie)} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie}/>
+            <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} />
 
             <style>
-        {`
-            .movie_li{
-                display:block;
-                float: left;
-                padding-left:40px;
-                color:black;
-                height:30px;
-                cursor:pointer;
-            }
-            ol, ul{
-                list-style:none;
-            }
+            {`
+                .movie_li{
+                    display:block;
+                    float: left;
+                    padding-left:40px;
+                    height:30px;
+                    cursor:pointer;
+                }
+                ol, ul{
+                    list-style:none;
+                }
 
-            .contentDiv{
-                width:1200px;
-                position:relative;
-                minWidth:1200px;
-            }
+                .contentDiv{
+                    width:1200px;
+                    position:relative;
+                    minWidth:1200px;
+                }
 
-            .hederContents{
-                display:flex;
-                justify-content:space-between;
-            }
-            .hederContents ul{
-                display:flex;
-                align-items:center;
-            }
-            .hederContents li{
-                margin-right:15px;
-                cursor:pointer;
-            }
-        `}
-        </style>
+                .hederContents{
+                    display:flex;
+                    justify-content:space-between;
+                }
+                .hederContents ul{
+                    display:flex;
+                    align-items:center;
+                }
+                .hederContents li{
+                    margin-right:40px;
+                    cursor:pointer;
+                }
+            `}
+            </style>
         </div>
         </Container>
     )
