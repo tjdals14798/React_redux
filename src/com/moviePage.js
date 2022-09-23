@@ -1,10 +1,10 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
-import { Container, Nav, Card, Button, InputGroup, Form } from 'react-bootstrap';
+import { Container, Nav, Card, Button, InputGroup, Form, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChevronRight, ChevronLeft, ChevronUp, Search } from 'react-bootstrap-icons';
 
-function Heder({ setSearchMovie }){
+function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin }){
     const [input,setInput] = useState('');
     const SearchMovie = e => setInput(e.target.value);
     const onSubmit = e => {
@@ -16,7 +16,7 @@ function Heder({ setSearchMovie }){
             <div className="hederContents">
                 <h1><a>시집이</a></h1>
                 <ul>
-                    <li>로그인</li><li>회원가입</li>
+                    {cklogin == false ? <li onClick={()=>setLgModal(true)}>로그인</li> : <li onClick={()=>setCklogin(false)}> 로그아웃 </li> } <li>회원가입</li>
                 </ul>
             </div>
             <hr/>
@@ -76,9 +76,7 @@ function Movie({ movies, setCurrentPage, currentPage }){
                  <Card.Img variant="top" src={require("../codeimg/noimg.gif")} style={{height:"200px"}}/>
                  <Card.Body>
                    <Card.Title style={{ overflow:"hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{movie.movieNm}</Card.Title>
-                   <Card.Text>
-                     개봉일:{movie.openDt}
-                   </Card.Text>
+                   <Card.Text> 개봉일:{movie.openDt} </Card.Text>
                  </Card.Body>
                </Card>
                </li>
@@ -88,15 +86,81 @@ function Movie({ movies, setCurrentPage, currentPage }){
                 <Button variant="secondary" onClick={()=>setCurrentPage(currentPage+1)} style={{position: 'absolute', zIndex:1, right: "1.5%", top:170 ,borderRadius:"50px"}}><h3><ChevronRight/></h3></Button>
             </div>
             {ScrollActive && <div style={{position:"fixed", bottom:"20px", right:"11.2%"}}>
-                    <Button variant="danger" size="lg" style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
-                    <Button variant="outline-dark" size="lg" onClick={topScroll} style={{zIndex:2, borderRadius:"20px", alignItems:"center"}}><ChevronUp/></Button>
-                </div>}
+                <Button variant="danger" size="lg" style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
+                <Button variant="outline-dark" size="lg" onClick={topScroll} style={{zIndex:2, borderRadius:"20px", alignItems:"center"}}><ChevronUp/></Button>
+            </div>}
         </Container>
         </div>
     )
 }
 
-export default function MoviePage(){
+function Login({ lgModal, setLgModal, setCklogin, member }){
+
+    const [loginInputs,setLoginInputs] = useState({
+        id: '',
+        password: ''
+      });
+    const { id, password } = loginInputs;
+    const loginOnChange = e => {
+        const {name, value} = e.target;
+        setLoginInputs({
+          ...loginInputs,
+          [name]:value
+        });
+      }
+        
+    const findMember = (info) => {
+        if(info.find((item) => item.id === id && item.password === password)){
+            setCklogin(true)
+        }
+    }
+
+    const loginOnSubmit = () => {
+        findMember(member);
+        setLoginInputs({
+          id: '',
+          password: ''
+        });
+        setLgModal(false);
+    }
+
+    
+
+    return(
+        <Modal size="lg" show={lgModal} onHide={() => setLgModal(false)}>
+        <Modal.Header closeButton/>
+        <Modal.Body >
+            <div>
+                <Nav variant="tabs">
+                    <Nav.Item>
+                        <Nav.Link style={{color:"white",background:"#fb4357"}}>로그인</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link disabled> 비회원 예매 </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link disabled> 비회원 예매확인 </Nav.Link>
+                    </Nav.Item>
+                </Nav>
+                <div className="my-4">
+                    <span>아이디 비밀번호를 입력하신 후, 로그인 버튼을 클릭해 주세요.</span>
+                    <Form className="w-50" style={{float:"none", margin:"auto", marginTop:"15px"}}>
+                        <Form.Group required controlId="formBasicEmail">
+                            <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="id" value={id} onChange={loginOnChange}/>
+                            <Form.Control type="text" placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
+                        </Form.Group>
+                        <Button variant="none" className="mt-2 w-100" onClick={loginOnSubmit} style={{color:"white", background:"#fb4357"}}> 로그인 </Button>
+                        <div id="findInfo"> <a>비밀번호 찾기</a> <a>아이디 찾기</a> </div>
+                    </Form>
+                </div>
+            </div>
+        </Modal.Body>
+      </Modal>
+    )
+}
+
+export default function MoviePage({ member }){
+    // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
     const [movie,setMovie] = useState(null);
     const [loading,setLoding] = useState(false);
     const [error,setError] = useState(null);
@@ -121,7 +185,9 @@ export default function MoviePage(){
     useEffect(()=>{
         JSON.stringify(fetchUsers());
     },[]);
-    
+    // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
+
+    // ----------------------------------------------------- 영화목록 페이지네이션 ------------------------------------------------------------
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 5;
     const indexOfLast = currentPage * postsPerPage;
@@ -132,15 +198,23 @@ export default function MoviePage(){
     currentPosts = posts.slice(indexOfFirst, indexOfLast);
     return currentPosts;
     };
-
+    // ----------------------------------------------------- 영화목록 페이지네이션 ------------------------------------------------------------
+    
+    // ----------------------------------------------------- 영화제목 필터 ------------------------------------------------------------
     const [searchMovie,setSearchMovie] = useState(''); 
 
     const search = (movie) => {
-        return movie.filter((item) => 
+        return movie.filter((item) =>
             item.movieNm.includes(searchMovie)
         );
     }
-
+    // ----------------------------------------------------- 영화제목 필터 ------------------------------------------------------------
+   
+    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    const [lgModal,setLgModal] = useState(false);
+    const [cklogin,setCklogin] = useState(false);
+    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    
     if(loading) return <div>로딩중...</div>;
     if(error) return <div>에러</div>;
     if(!movie) return null;
@@ -148,9 +222,9 @@ export default function MoviePage(){
     return(
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
-            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie}/>
+            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin}/>
             <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} />
-
+            <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member}/>
             <style>
             {`
                 .movie_li{
@@ -176,11 +250,16 @@ export default function MoviePage(){
                 }
                 .hederContents ul{
                     display:flex;
-                    align-items:center;
                 }
                 .hederContents li{
                     margin-right:40px;
                     cursor:pointer;
+                }
+
+                #findInfo a{
+                    text-decoration:underline;
+                    margin:15px;
+                    float:right;
                 }
             `}
             </style>
