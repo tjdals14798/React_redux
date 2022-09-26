@@ -4,7 +4,7 @@ import { Container, Nav, Card, Button, InputGroup, Form, Modal } from 'react-boo
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChevronRight, ChevronLeft, ChevronUp, Search } from 'react-bootstrap-icons';
 
-function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin }){
+function SearchBar({setSearchMovie}){
     const [input,setInput] = useState('');
     const SearchMovie = e => setInput(e.target.value);
     const onSubmit = e => {
@@ -12,23 +12,29 @@ function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin }){
         setSearchMovie(input)
     }
     return(
+        <Form onSubmit={onSubmit}>
+            <InputGroup size="sm">
+                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm" value={input} onChange={SearchMovie}/>
+                <InputGroup.Text id="inputGroup-sizing-sm" onClick={onSubmit} style={{cursor:"pointer"}}><Search/></InputGroup.Text>
+            </InputGroup>
+        </Form>
+    )
+}
+
+function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin, setJoinModal }){
+    return(
         <div className="contentDiv">
             <div className="hederContents">
                 <h1><a>시집이</a></h1>
                 <ul>
-                    {cklogin == false ? <li onClick={()=>setLgModal(true)}>로그인</li> : <li onClick={()=>setCklogin(false)}> 로그아웃 </li> } <li>회원가입</li>
+                    {cklogin == false ? <li onClick={()=>setLgModal(true)}>로그인</li> : <li onClick={()=>setCklogin(false)}> 로그아웃 </li> } <li onClick={()=>setJoinModal(true)}>회원가입</li>
                 </ul>
             </div>
             <hr/>
             <Nav className="my-2">
                 <li className="movie_li">영화</li><li className="movie_li">극장</li><li className="movie_li">예매</li><li className="movie_li">스토어</li><li className="movie_li">이벤트</li>
                 <div style={{top:"85px",position:"absolute", right:"0px"}}>
-                <Form onSubmit={onSubmit}>
-                    <InputGroup size="sm">
-                        <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm" value={input} onChange={SearchMovie}/>
-                        <InputGroup.Text id="inputGroup-sizing-sm" onClick={onSubmit} style={{cursor:"pointer"}}><Search/></InputGroup.Text>
-                    </InputGroup>
-                </Form>
+                <SearchBar setSearchMovie={setSearchMovie}/>
                 </div>
             </Nav>
             <img className="d-block w-100" style={{ height:"500px",borderTop:"2px solid red"}} src={require("../codeimg/dragon.jpg")}/>
@@ -36,7 +42,7 @@ function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin }){
     )
 }
 
-function Movie({ movies, setCurrentPage, currentPage }){
+function Movie({ movies, setCurrentPage, currentPage, setSearchMovie }){
     const [ScrollY, setScrollY] = useState(0); // window 의 pageYOffset값을 저장
     const [ScrollActive, setScrollActive] = useState(false);
     function handleScroll() {
@@ -67,7 +73,7 @@ function Movie({ movies, setCurrentPage, currentPage }){
       };
 
     return(
-        <div className="contentDiv">
+        <div className="contentDiv" style={{height:"400px"}}>
         <Container fluid>
             <h1 className="mt-2" style={{textAlign:"left"}}>무비 차트</h1>
             {movies.map((movie,i) =>(
@@ -85,10 +91,18 @@ function Movie({ movies, setCurrentPage, currentPage }){
                 <Button variant="secondary" onClick={()=>setCurrentPage(currentPage-1)} style={{position: 'absolute', zIndex:1, left: "-1.5%", top:170 ,borderRadius:"50px"}}><h3><ChevronLeft/></h3></Button>
                 <Button variant="secondary" onClick={()=>setCurrentPage(currentPage+1)} style={{position: 'absolute', zIndex:1, right: "1.5%", top:170 ,borderRadius:"50px"}}><h3><ChevronRight/></h3></Button>
             </div>
-            {ScrollActive && <div style={{position:"fixed", bottom:"20px", right:"11.2%"}}>
-                <Button variant="danger" size="lg" style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
-                <Button variant="outline-dark" size="lg" onClick={topScroll} style={{zIndex:2, borderRadius:"20px", alignItems:"center"}}><ChevronUp/></Button>
-            </div>}
+            {ScrollActive && <>
+                <div style={{position:"fixed",left:"16%", top:"0px", width:"100%",height:"50px", color:"white", background:"#fb4357"}}>
+                    <div style={{marginLeft:"130px"}}><li className="heder_li">시집이</li><li className="heder_li">영화</li><li className="heder_li">극장</li><li className="heder_li">예매</li><li className="heder_li">스토어</li><li className="heder_li">이벤트</li></div>
+                    <div style={{position:"absolute",right:"540px",top:"10px"}}>
+                        <SearchBar setSearchMovie={setSearchMovie}/>
+                    </div>
+                </div>
+                <div style={{position:"fixed", bottom:"20px", right:"11.2%"}}>
+                    <Button variant="danger" size="lg" style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
+                    <Button variant="outline-dark" size="lg" onClick={topScroll} style={{zIndex:2, borderRadius:"20px", alignItems:"center"}}><ChevronUp/></Button>
+                </div>
+            </>}
         </Container>
         </div>
     )
@@ -124,8 +138,6 @@ function Login({ lgModal, setLgModal, setCklogin, member }){
         setLgModal(false);
     }
 
-    
-
     return(
         <Modal size="lg" show={lgModal} onHide={() => setLgModal(false)}>
         <Modal.Header closeButton/>
@@ -159,7 +171,64 @@ function Login({ lgModal, setLgModal, setCklogin, member }){
     )
 }
 
-export default function MoviePage({ member }){
+function JoinMember({ joinModal, setJoinModal, onCreate }){
+
+    const [joinInputs,setJoinInputs] = useState({
+        id: '',
+        password: '',
+        nickname:''
+      });
+    const { id, password, nickname } = joinInputs;
+    const joinOnChange = e => {
+        const {name, value} = e.target;
+        setJoinInputs({
+          ...joinInputs,
+          [name]:value
+        });
+      }
+
+    const joinOnSubmit = () => {
+        onCreate(joinInputs)
+        setJoinInputs({
+          id: '',
+          password: '',
+          nickname:''
+        });
+        setJoinModal(false);
+    }
+
+    return(
+        <Modal size="lg" show={joinModal} onHide={() => setJoinModal(false)}>
+        <Modal.Header closeButton> <Modal.Title style={{marginLeft:"300px"}}>통합회원 가입</Modal.Title> </Modal.Header> 
+        <Modal.Body >
+            <div>
+                <div className="my-1">
+                    <ul>
+                    <li style={{float:"left",width:"350px"}}>
+                        <div>
+                        <h2>회원가입 여부안내</h2>
+                        <ul style={{listStyle:"disc"}}><li>입력하신 정보는 회원가입 여부에만 사용되며 저장되지 않습니다.</li></ul>
+                        </div>
+                    </li>
+                    <li>
+                        <Form className="w-50" style={{float:"right", margin:"auto", display:"block"}}>
+                            <Form.Group required controlId="formBasicEmail">
+                                <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="id" value={id} onChange={joinOnChange}/>
+                                <Form.Control type="text" placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={joinOnChange}/>
+                                <Form.Control type="text" placeholder="Nick 를 입력하세요" required name="nickname" value={nickname} onChange={joinOnChange}/>
+                            </Form.Group>
+                            <Button variant="dark" className="mt-2 w-100" onClick={joinOnSubmit}> 회원가입 </Button>
+                        </Form>
+                    </li>
+                </ul> 
+                </div>
+            </div>
+        </Modal.Body>
+      </Modal>
+    )
+}
+
+export default function MoviePage({ member, onCreate }){
     // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
     const [movie,setMovie] = useState(null);
     const [loading,setLoding] = useState(false);
@@ -214,6 +283,11 @@ export default function MoviePage({ member }){
     const [lgModal,setLgModal] = useState(false);
     const [cklogin,setCklogin] = useState(false);
     // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+
+    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    const [joinModal,setJoinModal] = useState(false);
+    // const [cklogin,setCklogin] = useState(false);
+    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
     
     if(loading) return <div>로딩중...</div>;
     if(error) return <div>에러</div>;
@@ -222,9 +296,10 @@ export default function MoviePage({ member }){
     return(
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
-            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin}/>
-            <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal}/>
+            <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie}/>
             <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member}/>
+            <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
             <style>
             {`
                 .movie_li{
@@ -250,10 +325,19 @@ export default function MoviePage({ member }){
                 }
                 .hederContents ul{
                     display:flex;
+                    height:40px;
                 }
                 .hederContents li{
                     margin-right:40px;
                     cursor:pointer;
+                    line-height: 40px;
+                }
+                .heder_li {
+                    display:block;
+                    float: left;
+                    padding-left:40px;
+                    cursor:pointer;
+                    line-height: 50px;
                 }
 
                 #findInfo a{
