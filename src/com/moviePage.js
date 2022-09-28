@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
+import $ from 'jquery';
 import { Container, Nav, Card, Button, InputGroup, Form, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChevronRight, ChevronLeft, ChevronUp, Search } from 'react-bootstrap-icons';
@@ -108,8 +109,7 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie }){
     )
 }
 
-function Login({ lgModal, setLgModal, setCklogin, member }){
-
+function Login({ lgModal, setLgModal, setCklogin, member, setFindMemModal }){
     const [loginInputs,setLoginInputs] = useState({
         id: '',
         password: ''
@@ -138,6 +138,11 @@ function Login({ lgModal, setLgModal, setCklogin, member }){
         setLgModal(false);
     }
 
+    const openFindModal = () => {
+        setLgModal(false);
+        setFindMemModal(true);
+    }
+
     return(
         <Modal size="lg" show={lgModal} onHide={() => setLgModal(false)}>
         <Modal.Header closeButton/>
@@ -162,7 +167,7 @@ function Login({ lgModal, setLgModal, setCklogin, member }){
                             <Form.Control type="text" placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
                         </Form.Group>
                         <Button variant="none" className="mt-2 w-100" onClick={loginOnSubmit} style={{color:"white", background:"#fb4357"}}> 로그인 </Button>
-                        <div id="findInfo"> <a>비밀번호 찾기</a> <a>아이디 찾기</a> </div>
+                        <div id="findInfo"> <a style={{cursor:"pointer"}} onClick={openFindModal}>비밀번호 찾기</a> <a style={{cursor:"pointer"}}  onClick={openFindModal}>아이디 찾기</a> </div>
                     </Form>
                 </div>
             </div>
@@ -228,6 +233,71 @@ function JoinMember({ joinModal, setJoinModal, onCreate }){
     )
 }
 
+function FindMemberModal({ findMemModal, setFindMemModal, member }){
+    const [tab,setTab] = useState(1);
+    return(
+        <Modal size="lg" show={findMemModal} onHide={() => setFindMemModal(false)}>
+        <Modal.Header closeButton/>
+        <Modal.Body >
+            <div>
+                <Nav id="findnav" variant="tabs" defaultActiveKey="findId">
+                    <Nav.Item>
+                        <Nav.Link className="findnav-link" eventKey="findId" onClick={()=>setTab(1)}>아이디 찾기</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link className="findnav-link" eventKey="findPassword" onClick={()=>setTab(2)}> 비밀번호 찾기 </Nav.Link>
+                    </Nav.Item>
+                </Nav>
+                <TabContent tab={tab} member={member}/>
+            </div>
+        </Modal.Body>
+      </Modal>
+    )
+}
+
+function TabContent({ tab, member }){
+    const [inputNick,setInputNick] = useState('');
+    const onChangeId = e => setInputNick(e.target.value);
+    const [findId,setFindId] = useState(null);
+    const searchId = (member) => {
+        return member.find((item) =>
+            item.nickname.includes(inputNick));
+    }
+
+    const [inputId,setInputId] = useState('');
+    const onChangePw = e => setInputId(e.target.value);
+    const [findPw,setFindPw] = useState(null);
+    const searchPw = (member) => {
+        return member.find((item) =>
+            item.id.includes(inputId));
+    }
+
+     if(tab === 1){
+        return <div className="my-4">
+                    <span>닉네임을 입력한 후, 찾기 버튼을 클릭해 주세요.</span>
+                    <Form className="w-50" style={{float:"none", margin:"auto", marginTop:"15px"}}>
+                        <Form.Group required >
+                            <Form.Control type="text" autoFocus placeholder="NickName 을 입력하세요" required name="inputNick" value={inputNick} onChange={onChangeId}/>
+                        </Form.Group>
+                        <Button variant="none" className="mt-2 w-100" onClick={()=>{setFindId(searchId(member).id)
+                            setInputNick('')}} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
+                    </Form>
+                    <span>회원님의 아이디는 : {findId}</span>
+                </div>
+    }else{
+        return <div className="my-4">
+                    <span>아이디를 입력한 후, 찾기 버튼을 클릭해 주세요.</span>
+                    <Form className="w-50" style={{float:"none", margin:"auto", marginTop:"15px"}}>
+                        <Form.Group required >
+                            <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="inputId" value={inputId} onChange={onChangePw}/>
+                        </Form.Group>
+                        <Button variant="none" className="mt-2 w-100" onClick={()=>setFindPw(searchPw(member).password)} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
+                    </Form>
+                    <span>회원님의 비밀번호는 : {findPw}</span>
+                </div>
+    }
+}
+
 export default function MoviePage({ member, onCreate }){
     // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
     const [movie,setMovie] = useState(null);
@@ -286,8 +356,11 @@ export default function MoviePage({ member, onCreate }){
 
     // ----------------------------------------------------- 로그인 ------------------------------------------------------------
     const [joinModal,setJoinModal] = useState(false);
-    // const [cklogin,setCklogin] = useState(false);
     // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    
+    // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
+    const [findMemModal,setFindMemModal] = useState(false);
+    // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
     
     if(loading) return <div>로딩중...</div>;
     if(error) return <div>에러</div>;
@@ -298,8 +371,16 @@ export default function MoviePage({ member, onCreate }){
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
             <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal}/>
             <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie}/>
-            <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member}/>
+            <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal}/>
             <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
+            <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member}/>
+            
+            $(window).load(function(){
+            document.addEventListener('keydown', function(event) {
+                if (event.keyCode === 13) event.preventDefault();
+            }, true)
+            }
+
             <style>
             {`
                 .movie_li{
@@ -344,6 +425,14 @@ export default function MoviePage({ member, onCreate }){
                     text-decoration:underline;
                     margin:15px;
                     float:right;
+                }
+
+                #findnav .nav-link{
+                    color:black;
+                }
+                #findnav .nav-link.active {
+                    background-color:#fb4357;
+                    color:white;
                 }
             `}
             </style>
