@@ -47,12 +47,12 @@ export default function member ( state = initialState, action ){
                 mem.id !== action.id
             );
         case CHANGE_NICKNAME:
-        return state.map(
-                mem =>
-                mem.id === action.mem.id
-                ? {...mem, nickname: action.mem.nickname} 
-                :mem
-            );
+            return state.map(
+                    mem =>
+                    mem.id === action.mem.id
+                    ? {...mem, nickname: action.mem.nickname} 
+                    :mem
+                );
         default:
             return state;
     }

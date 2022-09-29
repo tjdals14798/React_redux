@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
 import $ from 'jquery';
-import { Container, Nav, Card, Button, InputGroup, Form, Modal } from 'react-bootstrap';
+import { Container, Nav, Card, Button, InputGroup, Form, Modal, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChevronRight, ChevronLeft, ChevronUp, Search } from 'react-bootstrap-icons';
 
@@ -43,7 +43,7 @@ function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin, setJoinModal }
     )
 }
 
-function Movie({ movies, setCurrentPage, currentPage, setSearchMovie }){
+function Movie({ movies, setCurrentPage, currentPage, setSearchMovie, setTicketModal }){
     const [ScrollY, setScrollY] = useState(0); // window 의 pageYOffset값을 저장
     const [ScrollActive, setScrollActive] = useState(false);
     function handleScroll() {
@@ -100,7 +100,7 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie }){
                     </div>
                 </div>
                 <div style={{position:"fixed", bottom:"20px", right:"11.2%"}}>
-                    <Button variant="danger" size="lg" style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
+                    <Button variant="danger" size="lg" onClick={()=>setTicketModal(true)} style={{ zIndex:2, borderRadius:"50px"}}>예매하기</Button >{' '}
                     <Button variant="outline-dark" size="lg" onClick={topScroll} style={{zIndex:2, borderRadius:"20px", alignItems:"center"}}><ChevronUp/></Button>
                 </div>
             </>}
@@ -301,7 +301,61 @@ function TabContent({ tab, member, findId, setFindId, findPw, setFindPw }){
     }
 }
 
-export default function MoviePage({ member, onCreate }){
+const TicketList = React.memo(function Movieist({ movie, setTicketModal, setSeatModal }) {
+    const onClick = () =>{
+        setTicketModal(false);
+        setSeatModal(true);
+    }
+    return (
+      <>
+        {movie.map(m => (
+          <tr key={m.rank} onClick={onClick}>
+            <td>{m.rank}</td>
+            <td>{m.movieNm}</td>
+          </tr>
+        ))}
+      </>
+    );
+  });
+
+function TicketModal({ ticketModal, setTicketModal, movie, setSeatModal }){
+    return(
+        <Modal size="lg" show={ticketModal} onHide={() => setTicketModal(false)}>
+        <Modal.Header closeButton/>
+        <Modal.Body >
+            <Table striped bordered hover className="w-100">
+                <thead> 
+                    <tr><th>순위</th><th>제목</th></tr>
+                </thead>
+                <tbody>
+                    <TicketList movie={movie} setTicketModal={setTicketModal} setSeatModal={setSeatModal}/>
+                </tbody>
+            </Table>
+        </Modal.Body>
+      </Modal>
+    )
+}
+
+function SeatModal({ seatModal, setSeatModal, ticket }){
+    console.log(ticket)
+    return(
+        <Modal size="lg" show={seatModal} onHide={() => setSeatModal(false)}>
+        <Modal.Header closeButton/>
+        <Modal.Body >
+            {ticket.map((t) => (
+                <>
+                    {t.map(s =>(
+                        <span>{s}</span>            
+                    ))}
+                    <hr/>
+                </>
+            ))}
+        </Modal.Body>
+      </Modal>
+    )
+}
+
+export default function MoviePage({ member, onCreate, ticket }){
     // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
     const [movie,setMovie] = useState(null);
     const [loading,setLoding] = useState(false);
@@ -315,10 +369,9 @@ export default function MoviePage({ member, onCreate }){
             // loding를 true로 변경
             setLoding(true);
             const response = await axios.get(
-                'https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20120101'
+                'https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20220902'
             );
-            console.log(response.data.boxOfficeResult.dailyBoxOfficeList);
-            setMovie(response.data.boxOfficeResult.dailyBoxOfficeList);
+            setMovie(response.data.boxOfficeResult.weeklyBoxOfficeList);
         } catch (e){
             setError(e);
         }
@@ -370,6 +423,11 @@ export default function MoviePage({ member, onCreate }){
     const [joinModal,setJoinModal] = useState(false);
     // ----------------------------------------------------- 로그인 ------------------------------------------------------------
     
+    // ----------------------------------------------------- 예매 ------------------------------------------------------------
+    const [ticketModal,setTicketModal] = useState(false);
+    const [seatModal,setSeatModal] = useState(false);
+    // ----------------------------------------------------- 예매 ------------------------------------------------------------
+
     // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
     const [findMemModal,setFindMemModal] = useState(false);
     // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
@@ -382,10 +440,12 @@ export default function MoviePage({ member, onCreate }){
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
             <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal}/>
-            <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie}/>
+            <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie} setTicketModal={setTicketModal}/>
             <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal}/>
             <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
             <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member}/>
+            <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal}/>
+            <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket}/>
 
             <style>
             {`
