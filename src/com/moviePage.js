@@ -235,6 +235,8 @@ function JoinMember({ joinModal, setJoinModal, onCreate }){
 
 function FindMemberModal({ findMemModal, setFindMemModal, member }){
     const [tab,setTab] = useState(1);
+    const [findId,setFindId] = useState(null);
+    const [findPw,setFindPw] = useState(null);
     return(
         <Modal size="lg" show={findMemModal} onHide={() => setFindMemModal(false)}>
         <Modal.Header closeButton/>
@@ -242,23 +244,24 @@ function FindMemberModal({ findMemModal, setFindMemModal, member }){
             <div>
                 <Nav id="findnav" variant="tabs" defaultActiveKey="findId">
                     <Nav.Item>
-                        <Nav.Link className="findnav-link" eventKey="findId" onClick={()=>setTab(1)}>아이디 찾기</Nav.Link>
+                        <Nav.Link className="findnav-link" eventKey="findId" onClick={()=>{setTab(1)
+                        setFindId(null)}}>아이디 찾기</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link className="findnav-link" eventKey="findPassword" onClick={()=>setTab(2)}> 비밀번호 찾기 </Nav.Link>
+                        <Nav.Link className="findnav-link" eventKey="findPassword" onClick={()=>{setTab(2)
+                        setFindPw(null)}}> 비밀번호 찾기 </Nav.Link>
                     </Nav.Item>
                 </Nav>
-                <TabContent tab={tab} member={member}/>
+                <TabContent tab={tab} member={member} findId={findId} setFindId={setFindId} findPw={findPw} setFindPw={setFindPw}/>
             </div>
         </Modal.Body>
       </Modal>
     )
 }
 
-function TabContent({ tab, member }){
+function TabContent({ tab, member, findId, setFindId, findPw, setFindPw }){
     const [inputNick,setInputNick] = useState('');
     const onChangeId = e => setInputNick(e.target.value);
-    const [findId,setFindId] = useState(null);
     const searchId = (member) => {
         return member.find((item) =>
             item.nickname.includes(inputNick));
@@ -266,23 +269,23 @@ function TabContent({ tab, member }){
 
     const [inputId,setInputId] = useState('');
     const onChangePw = e => setInputId(e.target.value);
-    const [findPw,setFindPw] = useState(null);
     const searchPw = (member) => {
         return member.find((item) =>
             item.id.includes(inputId));
     }
 
      if(tab === 1){
-        return <div className="my-4">
+        return <div className="my-3">
                     <span>닉네임을 입력한 후, 찾기 버튼을 클릭해 주세요.</span>
                     <Form className="w-50" style={{float:"none", margin:"auto", marginTop:"15px"}}>
                         <Form.Group required >
                             <Form.Control type="text" autoFocus placeholder="NickName 을 입력하세요" required name="inputNick" value={inputNick} onChange={onChangeId}/>
                         </Form.Group>
-                        <Button variant="none" className="mt-2 w-100" onClick={()=>{setFindId(searchId(member).id)
+                        <Button variant="none" className="mt-2 w-100" onClick={()=>{console.log(searchId(member))
+                            setFindId(searchId(member).id)
                             setInputNick('')}} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
                     </Form>
-                    <span>회원님의 아이디는 : {findId}</span>
+                    {findId != null && <span>회원님의 아이디는 : {findId}</span>}
                 </div>
     }else{
         return <div className="my-4">
@@ -293,7 +296,7 @@ function TabContent({ tab, member }){
                         </Form.Group>
                         <Button variant="none" className="mt-2 w-100" onClick={()=>setFindPw(searchPw(member).password)} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
                     </Form>
-                    <span>회원님의 비밀번호는 : {findPw}</span>
+                    {findPw != null && <span>회원님의 비밀번호는 : {findPw}</span>}
                 </div>
     }
 }
@@ -312,8 +315,9 @@ export default function MoviePage({ member, onCreate }){
             // loding를 true로 변경
             setLoding(true);
             const response = await axios.get(
-                'http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20120101'
+                'https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20120101'
             );
+            console.log(response.data.boxOfficeResult.dailyBoxOfficeList);
             setMovie(response.data.boxOfficeResult.dailyBoxOfficeList);
         } catch (e){
             setError(e);
@@ -322,7 +326,15 @@ export default function MoviePage({ member, onCreate }){
     }
 
     useEffect(()=>{
-        JSON.stringify(fetchUsers());
+        JSON.stringify(fetchUsers())
+        $(window).keydown(function(e){
+            if (e.keyCode === 13) {
+                if(window.event){
+                    e.preventDefault();
+                    return;
+                }
+            }
+        })
     },[]);
     // ----------------------------------------------------- 영화목록 불러오기 ------------------------------------------------------------
 
@@ -365,7 +377,7 @@ export default function MoviePage({ member, onCreate }){
     if(loading) return <div>로딩중...</div>;
     if(error) return <div>에러</div>;
     if(!movie) return null;
-
+    
     return(
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
@@ -374,12 +386,6 @@ export default function MoviePage({ member, onCreate }){
             <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal}/>
             <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
             <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member}/>
-            
-            $(window).load(function(){
-            document.addEventListener('keydown', function(event) {
-                if (event.keyCode === 13) event.preventDefault();
-            }, true)
-            }
 
             <style>
             {`
