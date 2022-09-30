@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoviePage from "../com/moviePage";
 import { addMember } from "../modules/member";
-import "../modules/ticket";
+import { changeSeat } from "../modules/ticket";
 
 export default function MovieContainer(){
     const member = useSelector(state => state.member);
@@ -10,6 +10,7 @@ export default function MovieContainer(){
     const dispatch = useDispatch();
 
     const onCreate = text => dispatch(addMember(text));
+    const onSChange = useCallback(text => dispatch(changeSeat(text.seatArr,text.seatIndex),[dispatch]));
 
-    return <MoviePage member={member} onCreate={onCreate} ticket={ticket}/>
+    return <MoviePage member={member} onCreate={onCreate} ticket={ticket} onSChange={onSChange}/>
 }
