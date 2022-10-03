@@ -22,7 +22,7 @@ function SearchBar({setSearchMovie}){
     )
 }
 
-function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin, setJoinModal }){
+function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin, setJoinModal, setTicketModal }){
     return(
         <div className="contentDiv">
             <div className="hederContents">
@@ -33,7 +33,7 @@ function Heder({ setSearchMovie, setLgModal, cklogin, setCklogin, setJoinModal }
             </div>
             <hr/>
             <Nav className="my-2">
-                <li className="movie_li">영화</li><li className="movie_li">극장</li><li className="movie_li">예매</li><li className="movie_li">스토어</li><li className="movie_li">이벤트</li>
+                <li className="movie_li">영화</li><li className="movie_li">극장</li><li className="movie_li" style={{color:"red"}} onClick={()=>setTicketModal(true)}>예매</li><li className="movie_li">스토어</li><li className="movie_li">이벤트</li>
                 <div style={{top:"85px",position:"absolute", right:"0px"}}>
                 <SearchBar setSearchMovie={setSearchMovie}/>
                 </div>
@@ -301,15 +301,17 @@ function TabContent({ tab, member, findId, setFindId, findPw, setFindPw }){
     }
 }
 
-const TicketList = React.memo(function Movieist({ movie, setTicketModal, setSeatModal }) {
-    const onClick = () =>{
+const TicketList = React.memo(function Movieist({ movie, setTicketModal, setSeatModal, setMovieNum, setMovieName }) {
+    const onClick = (rank,name) =>{
+        setMovieNum(rank-1);
+        setMovieName(name);
         setTicketModal(false);
         setSeatModal(true);
     }
     return (
       <>
         {movie.map(m => (
-          <tr key={m.rank} onClick={onClick}>
+          <tr key={m.rank} onClick={()=>onClick(m.rank,m.movieNm)}>
             <td>{m.rank}</td>
             <td>{m.movieNm}</td>
           </tr>
@@ -318,17 +320,17 @@ const TicketList = React.memo(function Movieist({ movie, setTicketModal, setSeat
     );
   });
 
-function TicketModal({ ticketModal, setTicketModal, movie, setSeatModal }){
+function TicketModal({ ticketModal, setTicketModal, movie, setSeatModal, setMovieNum, setMovieName }){
     return(
         <Modal size="lg" show={ticketModal} onHide={() => setTicketModal(false)}>
-        <Modal.Header closeButton/>
+        <Modal.Header closeButton><Modal.Title>예매하기</Modal.Title></Modal.Header>
         <Modal.Body >
             <Table striped bordered hover className="w-100">
                 <thead> 
                     <tr><th>순위</th><th>제목</th></tr>
                 </thead>
                 <tbody>
-                    <TicketList movie={movie} setTicketModal={setTicketModal} setSeatModal={setSeatModal}/>
+                    <TicketList movie={movie} setTicketModal={setTicketModal} setSeatModal={setSeatModal} setMovieNum={setMovieNum} setMovieName={setMovieName}/>
                 </tbody>
             </Table>
         </Modal.Body>
@@ -336,7 +338,7 @@ function TicketModal({ ticketModal, setTicketModal, movie, setSeatModal }){
     )
 }
 
-function SeatModal({ seatModal, setSeatModal, ticket, onSChange }){
+function SeatModal({ seatModal, setSeatModal, ticket, onSChange, movieNum, movieName }){
     const [seatArr,setSeatArr] = useState(null);
     const [seatIndex,setSeatIndex] = useState(null);
     const onClick = (i,j) => {
@@ -345,21 +347,24 @@ function SeatModal({ seatModal, setSeatModal, ticket, onSChange }){
     };
 
     const onSubmit = (seatArr,seatIndex) => {
-        onSChange({seatArr,seatIndex});
+        onSChange({seatArr,seatIndex,movieNum});
         setSeatModal(false);
         setTimeout(function() {
             alert("예매완료")
-          }, 1000);
+          }, 500);
         
     };
 
     return(
         <Modal size="lg" show={seatModal} onHide={() => setSeatModal(false)}>
-        <Modal.Header closeButton><Container><Modal.Title style={{textAlign:"center"}}>화면</Modal.Title></Container></Modal.Header>   
+        <Modal.Header closeButton><Container><Modal.Title style={{textAlign:"center"}}>{movieName}</Modal.Title></Container></Modal.Header>   
         <Modal.Body >
             <Table id="seatTable">
+                <thead>
+                <tr><td colSpan={13}>화면</td></tr>
+                </thead>
                 <tbody>
-                    {ticket.map((t,i) => (
+                    {ticket[movieNum].map((t,i) => (
                         <tr key={i}>
                             {t.map((s,j) =>(
                                 <td key={j}>
@@ -370,7 +375,7 @@ function SeatModal({ seatModal, setSeatModal, ticket, onSChange }){
                             ))}
                         </tr>
                     ))}
-                    <tr><td colSpan={13}>선택된 좌석 {seatIndex !== null && <>{String.fromCharCode(seatArr+65)}{seatIndex}</>}</td></tr>
+                    <tr><td colSpan={13}>선택된 좌석 : {seatIndex !== null && <>{String.fromCharCode(seatArr+65)}{seatIndex}</>}</td></tr>
                     {seatIndex !== null && <tr><td colSpan={13}><Button onClick={()=>onSubmit(seatArr,seatIndex)}>예매</Button></td></tr>}
                 </tbody>
             </Table>
@@ -450,6 +455,8 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
     // ----------------------------------------------------- 예매 ------------------------------------------------------------
     const [ticketModal,setTicketModal] = useState(false);
     const [seatModal,setSeatModal] = useState(false);
+    const [movieNum,setMovieNum] = useState(0);
+    const [movieName,setMovieName] = useState(null);
     // ----------------------------------------------------- 예매 ------------------------------------------------------------
 
     // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
@@ -462,13 +469,13 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
     return(
         <Container>
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
-            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal}/>
+            <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal} setTicketModal={setTicketModal}/>
             <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie} setTicketModal={setTicketModal}/>
             <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal}/>
             <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
             <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member}/>
-            <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal}/>
-            <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket} onSChange={onSChange}/>
+            <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal} movieNum={movieNum} setMovieNum={setMovieNum} setMovieName={setMovieName}/>
+            <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket} onSChange={onSChange} movieNum={movieNum} movieName={movieName}/>
 
             <style>
             {`
