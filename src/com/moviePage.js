@@ -94,7 +94,7 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie, setTicketM
             </div>
             {ScrollActive && <>
                 <div style={{position:"fixed",left:"16%", top:"0px", width:"100%",height:"50px", color:"white", background:"#fb4357"}}>
-                    <div style={{marginLeft:"130px"}}><li className="heder_li">시집이</li><li className="heder_li">영화</li><li className="heder_li">극장</li><li className="heder_li">예매</li><li className="heder_li">스토어</li><li className="heder_li">이벤트</li></div>
+                    <div style={{marginLeft:"130px"}}><li className="heder_li">시집이</li><li className="heder_li">영화</li><li className="heder_li">극장</li><li className="heder_li" onClick={()=>setTicketModal(true)}>예매</li><li className="heder_li">스토어</li><li className="heder_li">이벤트</li></div>
                     <div style={{position:"absolute",right:"540px",top:"10px"}}>
                         <SearchBar setSearchMovie={setSearchMovie}/>
                     </div>
@@ -109,7 +109,7 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie, setTicketM
     )
 }
 
-function Login({ lgModal, setLgModal, setCklogin, member, setFindMemModal }){
+function Login({ lgModal, setLgModal, setCklogin, member, setFindMemModal, setTab }){
     const [loginInputs,setLoginInputs] = useState({
         id: '',
         password: ''
@@ -138,8 +138,9 @@ function Login({ lgModal, setLgModal, setCklogin, member, setFindMemModal }){
         setLgModal(false);
     }
 
-    const openFindModal = () => {
+    const openFindModal = (n) => {
         setLgModal(false);
+        setTab(n);
         setFindMemModal(true);
     }
 
@@ -167,7 +168,7 @@ function Login({ lgModal, setLgModal, setCklogin, member, setFindMemModal }){
                             <Form.Control type="text" placeholder="PASSWORD 를 입력하세요" required className="my-1" name="password" value={password} onChange={loginOnChange}/>
                         </Form.Group>
                         <Button variant="none" className="mt-2 w-100" onClick={loginOnSubmit} style={{color:"white", background:"#fb4357"}}> 로그인 </Button>
-                        <div id="findInfo"> <a style={{cursor:"pointer"}} onClick={openFindModal}>비밀번호 찾기</a> <a style={{cursor:"pointer"}}  onClick={openFindModal}>아이디 찾기</a> </div>
+                        <div id="findInfo"> <a style={{cursor:"pointer"}} onClick={()=>openFindModal(2)}>비밀번호 찾기</a> <a style={{cursor:"pointer"}}  onClick={()=>openFindModal(1)}>아이디 찾기</a> </div>
                     </Form>
                 </div>
             </div>
@@ -233,8 +234,7 @@ function JoinMember({ joinModal, setJoinModal, onCreate }){
     )
 }
 
-function FindMemberModal({ findMemModal, setFindMemModal, member }){
-    const [tab,setTab] = useState(1);
+function FindMemberModal({ findMemModal, setFindMemModal, member, setTab, tab }){
     const [findId,setFindId] = useState(null);
     const [findPw,setFindPw] = useState(null);
     return(
@@ -242,13 +242,13 @@ function FindMemberModal({ findMemModal, setFindMemModal, member }){
         <Modal.Header closeButton/>
         <Modal.Body >
             <div>
-                <Nav id="findnav" variant="tabs" defaultActiveKey="findId">
+                <Nav id="findnav" variant="tabs" defaultActiveKey={tab}>
                     <Nav.Item>
-                        <Nav.Link className="findnav-link" eventKey="findId" onClick={()=>{setTab(1)
+                        <Nav.Link className="findnav-link" eventKey="1" onClick={()=>{setTab(1)
                         setFindId(null)}}>아이디 찾기</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link className="findnav-link" eventKey="findPassword" onClick={()=>{setTab(2)
+                        <Nav.Link className="findnav-link" eventKey="2" onClick={()=>{setTab(2)
                         setFindPw(null)}}> 비밀번호 찾기 </Nav.Link>
                     </Nav.Item>
                 </Nav>
@@ -281,8 +281,7 @@ function TabContent({ tab, member, findId, setFindId, findPw, setFindPw }){
                         <Form.Group required >
                             <Form.Control type="text" autoFocus placeholder="NickName 을 입력하세요" required name="inputNick" value={inputNick} onChange={onChangeId}/>
                         </Form.Group>
-                        <Button variant="none" className="mt-2 w-100" onClick={()=>{console.log(searchId(member))
-                            setFindId(searchId(member).id)
+                        <Button variant="none" className="mt-2 w-100" onClick={()=>{setFindId(searchId(member).id)
                             setInputNick('')}} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
                     </Form>
                     {findId != null && <span>회원님의 아이디는 : {findId}</span>}
@@ -294,7 +293,8 @@ function TabContent({ tab, member, findId, setFindId, findPw, setFindPw }){
                         <Form.Group required >
                             <Form.Control type="text" autoFocus placeholder="ID 를 입력하세요" required name="inputId" value={inputId} onChange={onChangePw}/>
                         </Form.Group>
-                        <Button variant="none" className="mt-2 w-100" onClick={()=>setFindPw(searchPw(member).password)} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
+                        <Button variant="none" className="mt-2 w-100" onClick={()=>{setFindPw(searchPw(member).password)
+                            setInputId('')}} style={{color:"white", background:"#fb4357"}}> 찾기 </Button>
                     </Form>
                     {findPw != null && <span>회원님의 비밀번호는 : {findPw}</span>}
                 </div>
@@ -448,9 +448,9 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
     const [cklogin,setCklogin] = useState(false);
     // ----------------------------------------------------- 로그인 ------------------------------------------------------------
 
-    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    // ----------------------------------------------------- 회원가입 ------------------------------------------------------------
     const [joinModal,setJoinModal] = useState(false);
-    // ----------------------------------------------------- 로그인 ------------------------------------------------------------
+    // ----------------------------------------------------- 회원가입 ------------------------------------------------------------
     
     // ----------------------------------------------------- 예매 ------------------------------------------------------------
     const [ticketModal,setTicketModal] = useState(false);
@@ -460,6 +460,7 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
     // ----------------------------------------------------- 예매 ------------------------------------------------------------
 
     // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
+    const [tab,setTab] = useState(1);
     const [findMemModal,setFindMemModal] = useState(false);
     // ----------------------------------------------------- 아이디 찾기 ------------------------------------------------------------
     
@@ -471,9 +472,9 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
         <div style={{position:"relative", width:"100%", minWidth:"1280px"}}>
             <Heder searchMovie={searchMovie} setSearchMovie={setSearchMovie} setLgModal={setLgModal} cklogin={cklogin} setCklogin={setCklogin} setJoinModal={setJoinModal} setTicketModal={setTicketModal}/>
             <Movie movies={search(currentPosts(movie))} setCurrentPage={setCurrentPage} currentPage={currentPage} setSearchMovie={setSearchMovie} setTicketModal={setTicketModal}/>
-            <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal}/>
+            <Login lgModal={lgModal} setLgModal={setLgModal} setCklogin={setCklogin} member={member} setFindMemModal={setFindMemModal} tab={tab} setTab={setTab}/>
             <JoinMember joinModal={joinModal} setJoinModal={setJoinModal} onCreate={onCreate}/>
-            <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member}/>
+            <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member} tab={tab} setTab={setTab}/>
             <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal} movieNum={movieNum} setMovieNum={setMovieNum} setMovieName={setMovieName}/>
             <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket} onSChange={onSChange} movieNum={movieNum} movieName={movieName}/>
 

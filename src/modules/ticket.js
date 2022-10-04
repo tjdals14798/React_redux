@@ -107,8 +107,6 @@ export default function ticket( state = initialState, action ){
         case CHANGE_SEAT :
             state[action.num][action.arr].splice(action.idx,1,2)
             return state;
-            // return {}
-            // console.log(state[action.arr].splice(action.idx,13,2));
         default:
             return state;
     }
