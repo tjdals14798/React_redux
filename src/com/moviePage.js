@@ -58,12 +58,11 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie, setTicketM
 
     useEffect(() => {
         function scrollListener() {
-        window.addEventListener("scroll", handleScroll);
+            window.addEventListener("scroll", handleScroll);
         } //  window 에서 스크롤을 감시 시작
         scrollListener(); // window 에서 스크롤을 감시
-        return () => {
-        window.removeEventListener("scroll", handleScroll);
-        }; //  window 에서 스크롤을 감시를 종료
+        return () => window.removeEventListener("scroll", handleScroll);    //  window 에서 스크롤을 감시를 종료
+
     });
 
     const topScroll = () => {
@@ -78,7 +77,7 @@ function Movie({ movies, setCurrentPage, currentPage, setSearchMovie, setTicketM
         <Container fluid>
             <h1 className="mt-2" style={{textAlign:"left"}}>무비 차트</h1>
             {movies.map((movie,i) =>(
-                <li key={i} style={{position: 'sticky', float: "left", listStyle:"none", marginLeft:"7px"}}>
+                <li key={i} className="movie_card" style={{position: 'sticky', float: "left", listStyle:"none", marginLeft:"7px", cursor:"pointer"}}>
                  <Card style={{ width: '14rem', height:"300px" }}>
                  <Card.Img variant="top" src={require("../codeimg/noimg.gif")} style={{height:"200px"}}/>
                  <Card.Body>
@@ -406,7 +405,6 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
         }
         setLoding(false);
     }
-
     useEffect(()=>{
         JSON.stringify(fetchUsers())
         $(window).keydown(function(e){
@@ -477,9 +475,12 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
             <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member} tab={tab} setTab={setTab}/>
             <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal} movieNum={movieNum} setMovieNum={setMovieNum} setMovieName={setMovieName}/>
             <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket} onSChange={onSChange} movieNum={movieNum} movieName={movieName}/>
-
+            <Button id="test" onClick={test}>111</Button>
             <style>
             {`
+                .movie_card{
+                    
+                }
                 .movie_li{
                     display:block;
                     float: left;
