@@ -351,7 +351,7 @@ function SeatModal({ seatModal, setSeatModal, ticket, onSChange, movieNum, movie
         setTimeout(function() {
             alert("예매완료")
           }, 500);
-        
+        setSeatIndex(null);
     };
 
     return(
@@ -475,7 +475,6 @@ export default function MoviePage({ member, onCreate, ticket, onSChange }){
             <FindMemberModal findMemModal={findMemModal} setFindMemModal={setFindMemModal} member={member} tab={tab} setTab={setTab}/>
             <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} movie={movie} setSeatModal={setSeatModal} movieNum={movieNum} setMovieNum={setMovieNum} setMovieName={setMovieName}/>
             <SeatModal seatModal={seatModal} setSeatModal={setSeatModal} ticket={ticket} onSChange={onSChange} movieNum={movieNum} movieName={movieName}/>
-            <Button id="test" onClick={test}>111</Button>
             <style>
             {`
                 .movie_card{
